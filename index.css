@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+@keyframes revealCell {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.9);
+    filter: blur(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.reveal-cell {
+  opacity: 0;
+  animation: revealCell 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
