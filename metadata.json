@@ -1,0 +1,5 @@
+{
+  "name": "Copy of Metrodle BCN",
+  "description": "Un joc diari d'endevinar estacions de metro de Barcelona, comparant línies, transbordaments, connexions externes i distància en parades.",
+  "requestFramePermissions": []
+}
