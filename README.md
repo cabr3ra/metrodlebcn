@@ -4,9 +4,7 @@
 
 Benvingut a **Metrodle BCN**, un joc estil "Wordle" on l'objectiu és endevinar una estació oculta de la xarxa de metro de Barcelona utilitzant pistes basades en la proximitat, línies i característiques de les estacions.
 
-<div align="center">
-  <img src="https://images.unsplash.com/photo-1554316335-b2861c8c5c7d?q=80&w=1000&auto=format&fit=crop" alt="Metro Barcelona" width="600" style="border-radius: 10px;" />
-</div>
+
 
 ## 🎮 Com Jugar
 
