@@ -35,15 +35,15 @@ const STATIONS = [
     { id: '12', name: 'Espanya', lines: ['L1', 'L3', 'L8'], type: 'Subterrània', position: 'Central', connections: ['FGC'], lineOrders: { L1: 12, L3: 8, L8: 1 } },
     { id: '13', name: 'Rocafort', lines: ['L1'], type: 'Subterrània', position: 'Central', connections: [], lineOrders: { L1: 13 } },
     { id: '14', name: 'Urgell', lines: ['L1'], type: 'Subterrània', position: 'Central', connections: [], lineOrders: { L1: 14 } },
-    { id: '15', name: 'Universitat', lines: ['L1', 'L2'], type: 'Subterrània', position: 'Central', connections: [], lineOrders: { L1: 15, L2: 3 } },
+    { id: '15', name: 'Universitat', lines: ['L1', 'L2'], type: 'Subterrània', position: 'Central', connections: ['Info'], lineOrders: { L1: 15, L2: 3 } },
     { id: '16', name: 'Catalunya', lines: ['L1', 'L3'], type: 'Subterrània', position: 'Central', connections: ['FGC', 'Rodalies'], lineOrders: { L1: 16, L3: 13 } },
     { id: '17', name: 'Urquinaona', lines: ['L1', 'L4'], type: 'Subterrània', position: 'Central', connections: [], lineOrders: { L1: 17, L4: 5 } },
-    { id: '18', name: 'Arc de Triomf', lines: ['L1'], type: 'Subterrània', position: 'Central', connections: ['Rodalies'], lineOrders: { L1: 18 } },
+    { id: '18', name: 'Arc de Triomf', lines: ['L1'], type: 'Subterrània', position: 'Central', connections: ['Rodalies', 'Bus'], lineOrders: { L1: 18 } },
     { id: '19', name: 'Marina', lines: ['L1'], type: 'Subterrània', position: 'Central', connections: ['Tram'], lineOrders: { L1: 19 } },
     { id: '20', name: 'Glòries', lines: ['L1'], type: 'Subterrània', position: 'Central', connections: ['Tram'], lineOrders: { L1: 20 } },
     { id: '21', name: 'El Clot', lines: ['L1', 'L2'], type: 'Subterrània', position: 'Central', connections: ['Rodalies'], lineOrders: { L1: 21, L2: 9 } },
     { id: '22', name: 'Navas', lines: ['L1'], type: 'Subterrània', position: 'Extrem', connections: [], lineOrders: { L1: 22 } },
-    { id: '23', name: 'La Sagrera', lines: ['L1', 'L4', 'L5', 'L9N', 'L10N'], type: 'Subterrània', position: 'Extrem', connections: ['Rodalies'], lineOrders: { L1: 23, L4: 17, L5: 19, L9N: 11, L10N: 11 } },
+    { id: '23', name: 'La Sagrera', lines: ['L1', 'L4', 'L5', 'L9N', 'L10N'], type: 'Subterrània', position: 'Extrem', connections: ['Rodalies', 'Info'], lineOrders: { L1: 23, L4: 17, L5: 19, L9N: 11, L10N: 11 } },
     { id: '24', name: 'Fabra i Puig', lines: ['L1'], type: 'Subterrània', position: 'Extrem', connections: ['Rodalies', 'Bus'], lineOrders: { L1: 24 } },
     { id: '25', name: 'Sant Andreu', lines: ['L1'], type: 'Subterrània', position: 'Extrem', connections: ['Rodalies'], lineOrders: { L1: 25 } },
     { id: '26', name: 'Torras i Bages', lines: ['L1'], type: 'Subterrània', position: 'Extrem', connections: [], lineOrders: { L1: 26 } },
@@ -130,6 +130,16 @@ const STATIONS = [
 ];
 
 let sql = `
+-- CLEANUP: Drop tables if they exist to start fresh and avoid conflicts
+DROP TABLE IF EXISTS public.daily_schedule CASCADE;
+DROP TABLE IF EXISTS public.game_sessions CASCADE;
+DROP TABLE IF EXISTS public.user_stats CASCADE;
+DROP TABLE IF EXISTS public.station_connections CASCADE;
+DROP TABLE IF EXISTS public.connections CASCADE;
+DROP TABLE IF EXISTS public.station_lines CASCADE;
+DROP TABLE IF EXISTS public.stations CASCADE;
+DROP TABLE IF EXISTS public.lines CASCADE;
+
 -- Enable Row Level Security
 alter default privileges in schema public grant all on tables to postgres, anon, authenticated, service_role;
 

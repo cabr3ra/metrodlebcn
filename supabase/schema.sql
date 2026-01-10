@@ -1,3 +1,4 @@
+
 -- CLEANUP: Drop tables if they exist to start fresh and avoid conflicts
 DROP TABLE IF EXISTS public.daily_schedule CASCADE;
 DROP TABLE IF EXISTS public.game_sessions CASCADE;
@@ -20,7 +21,6 @@ CREATE TABLE IF NOT EXISTS public.lines (
 );
 
 ALTER TABLE public.lines ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow public read access on lines" ON public.lines;
 CREATE POLICY "Allow public read access on lines" ON public.lines FOR SELECT USING (true);
 
 
@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS public.stations (
 );
 
 ALTER TABLE public.stations ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow public read access on stations" ON public.stations;
 CREATE POLICY "Allow public read access on stations" ON public.stations FOR SELECT USING (true);
 
 
@@ -46,7 +45,6 @@ CREATE TABLE IF NOT EXISTS public.station_lines (
 );
 
 ALTER TABLE public.station_lines ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow public read access on station_lines" ON public.station_lines;
 CREATE POLICY "Allow public read access on station_lines" ON public.station_lines FOR SELECT USING (true);
 
 
@@ -56,7 +54,6 @@ CREATE TABLE IF NOT EXISTS public.connections (
 );
 
 ALTER TABLE public.connections ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow public read access on connections" ON public.connections;
 CREATE POLICY "Allow public read access on connections" ON public.connections FOR SELECT USING (true);
 
 
@@ -68,7 +65,6 @@ CREATE TABLE IF NOT EXISTS public.station_connections (
 );
 
 ALTER TABLE public.station_connections ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow public read access on station_connections" ON public.station_connections;
 CREATE POLICY "Allow public read access on station_connections" ON public.station_connections FOR SELECT USING (true);
 
 
@@ -84,11 +80,8 @@ CREATE TABLE IF NOT EXISTS public.user_stats (
 );
 
 ALTER TABLE public.user_stats ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Users can read own stats" ON public.user_stats;
 CREATE POLICY "Users can read own stats" ON public.user_stats FOR SELECT USING (auth.uid() = user_id);
-DROP POLICY IF EXISTS "Users can update own stats" ON public.user_stats;
 CREATE POLICY "Users can update own stats" ON public.user_stats FOR UPDATE USING (auth.uid() = user_id);
-DROP POLICY IF EXISTS "Users can insert own stats" ON public.user_stats;
 CREATE POLICY "Users can insert own stats" ON public.user_stats FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 
@@ -108,11 +101,8 @@ CREATE TABLE IF NOT EXISTS public.game_sessions (
 );
 
 ALTER TABLE public.game_sessions ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Users can read own sessions" ON public.game_sessions;
 CREATE POLICY "Users can read own sessions" ON public.game_sessions FOR SELECT USING (auth.uid() = user_id);
-DROP POLICY IF EXISTS "Users can insert own sessions" ON public.game_sessions;
 CREATE POLICY "Users can insert own sessions" ON public.game_sessions FOR INSERT WITH CHECK (auth.uid() = user_id);
-DROP POLICY IF EXISTS "Users can update own sessions" ON public.game_sessions;
 CREATE POLICY "Users can update own sessions" ON public.game_sessions FOR UPDATE USING (auth.uid() = user_id);
 
 
@@ -124,7 +114,6 @@ CREATE TABLE IF NOT EXISTS public.daily_schedule (
 );
 
 ALTER TABLE public.daily_schedule ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow public read access on daily_schedule" ON public.daily_schedule;
 CREATE POLICY "Allow public read access on daily_schedule" ON public.daily_schedule FOR SELECT USING (true);
 
 
@@ -146,8 +135,9 @@ INSERT INTO public.lines (id, primary_color, secondary_color, font_color) VALUES
 INSERT INTO public.lines (id, primary_color, secondary_color, font_color) VALUES ('L12', '#BBB3D7', '#786E95', '#1D1D1B') ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.connections (id) VALUES ('Rodalies') ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.connections (id) VALUES ('FGC') ON CONFLICT (id) DO NOTHING;
-INSERT INTO public.connections (id) VALUES ('Tram') ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.connections (id) VALUES ('Info') ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.connections (id) VALUES ('Bus') ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.connections (id) VALUES ('Tram') ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.connections (id) VALUES ('Funicular de Montjuïc') ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.connections (id) VALUES ('Regional') ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.connections (id) VALUES ('AVE') ON CONFLICT (id) DO NOTHING;
@@ -193,6 +183,7 @@ INSERT INTO public.station_lines (station_id, line_id) VALUES ('14', 'L1') ON CO
 INSERT INTO public.stations (id, name, type, position, line_orders) VALUES ('15', 'Universitat', 'Subterrània', 'Central', '{"L1":15,"L2":3}') ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, type = EXCLUDED.type, position = EXCLUDED.position, line_orders = EXCLUDED.line_orders;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('15', 'L1') ON CONFLICT (station_id, line_id) DO NOTHING;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('15', 'L2') ON CONFLICT (station_id, line_id) DO NOTHING;
+INSERT INTO public.station_connections (station_id, connection_id) VALUES ('15', 'Info') ON CONFLICT (station_id, connection_id) DO NOTHING;
 INSERT INTO public.stations (id, name, type, position, line_orders) VALUES ('16', 'Catalunya', 'Subterrània', 'Central', '{"L1":16,"L3":13}') ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, type = EXCLUDED.type, position = EXCLUDED.position, line_orders = EXCLUDED.line_orders;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('16', 'L1') ON CONFLICT (station_id, line_id) DO NOTHING;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('16', 'L3') ON CONFLICT (station_id, line_id) DO NOTHING;
@@ -204,6 +195,7 @@ INSERT INTO public.station_lines (station_id, line_id) VALUES ('17', 'L4') ON CO
 INSERT INTO public.stations (id, name, type, position, line_orders) VALUES ('18', 'Arc de Triomf', 'Subterrània', 'Central', '{"L1":18}') ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, type = EXCLUDED.type, position = EXCLUDED.position, line_orders = EXCLUDED.line_orders;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('18', 'L1') ON CONFLICT (station_id, line_id) DO NOTHING;
 INSERT INTO public.station_connections (station_id, connection_id) VALUES ('18', 'Rodalies') ON CONFLICT (station_id, connection_id) DO NOTHING;
+INSERT INTO public.station_connections (station_id, connection_id) VALUES ('18', 'Bus') ON CONFLICT (station_id, connection_id) DO NOTHING;
 INSERT INTO public.stations (id, name, type, position, line_orders) VALUES ('19', 'Marina', 'Subterrània', 'Central', '{"L1":19}') ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, type = EXCLUDED.type, position = EXCLUDED.position, line_orders = EXCLUDED.line_orders;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('19', 'L1') ON CONFLICT (station_id, line_id) DO NOTHING;
 INSERT INTO public.station_connections (station_id, connection_id) VALUES ('19', 'Tram') ON CONFLICT (station_id, connection_id) DO NOTHING;
@@ -223,6 +215,7 @@ INSERT INTO public.station_lines (station_id, line_id) VALUES ('23', 'L5') ON CO
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('23', 'L9N') ON CONFLICT (station_id, line_id) DO NOTHING;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('23', 'L10N') ON CONFLICT (station_id, line_id) DO NOTHING;
 INSERT INTO public.station_connections (station_id, connection_id) VALUES ('23', 'Rodalies') ON CONFLICT (station_id, connection_id) DO NOTHING;
+INSERT INTO public.station_connections (station_id, connection_id) VALUES ('23', 'Info') ON CONFLICT (station_id, connection_id) DO NOTHING;
 INSERT INTO public.stations (id, name, type, position, line_orders) VALUES ('24', 'Fabra i Puig', 'Subterrània', 'Extrem', '{"L1":24}') ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, type = EXCLUDED.type, position = EXCLUDED.position, line_orders = EXCLUDED.line_orders;
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('24', 'L1') ON CONFLICT (station_id, line_id) DO NOTHING;
 INSERT INTO public.station_connections (station_id, connection_id) VALUES ('24', 'Rodalies') ON CONFLICT (station_id, connection_id) DO NOTHING;
