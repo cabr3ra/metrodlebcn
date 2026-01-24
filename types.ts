@@ -1,5 +1,5 @@
 
-export type ConnectionType = 'FGC' | 'Rodalies' | 'Tram' | 'Tramblau' | 'Bus' | 'Montjuïc' | 'Info' | 'Aeropuerto' | 'Renfe' | 'AVE' | 'Funicular' | 'Port' | 'Aeroport';
+export type ConnectionType = 'FGC' | 'Rodalies' | 'Tram' | 'Tramblau' | 'Bus' | 'Info' | 'Renfe' | 'AVE' | 'Funicular' | 'Port' | 'Aeroport';
 export type StationType = 'Subterrània' | 'Superfície';
 export type LinePosition = 'Extrem' | 'Central';
 
