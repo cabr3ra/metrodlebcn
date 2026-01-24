@@ -1,6 +1,6 @@
 
-export type ConnectionType = 'FGC' | 'Rodalies' | 'Tram' | 'Bus' | 'Montjuïc' | 'Info' | 'Aeropuerto' | 'Regional' | 'AVE' | 'Funicular de Montjuïc';
-export type StationType = 'Subterrània' | 'Superfície' | 'Elevada';
+export type ConnectionType = 'FGC' | 'Rodalies' | 'Tram' | 'Tramblau' | 'Bus' | 'Montjuïc' | 'Info' | 'Aeropuerto' | 'Renfe' | 'AVE' | 'Funicular' | 'Port' | 'Aeroport';
+export type StationType = 'Subterrània' | 'Superfície';
 export type LinePosition = 'Extrem' | 'Central';
 
 export interface Station {
@@ -8,10 +8,9 @@ export interface Station {
   name: string;
   lines: string[];
   type: StationType;
-  position: LinePosition;
+  position: Record<string, LinePosition>;
   connections: ConnectionType[];
-  // Mapeja cada línia al seu número d'ordre en aquella línia específica
-  lineOrders: Record<string, number>; 
+  lineOrders: Record<string, number>;
 }
 
 export enum MatchType {
