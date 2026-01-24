@@ -32,7 +32,7 @@ export function useDailyStation() {
             id,
             name,
             type,
-            position,
+            positions,
             line_orders,
             station_lines ( line_id ),
             station_connections ( connection_id )
@@ -57,7 +57,7 @@ export function useDailyStation() {
                     id: dbStation.id,
                     name: dbStation.name,
                     type: dbStation.type,
-                    position: dbStation.position,
+                    positions: dbStation.positions,
                     lineOrders: dbStation.line_orders,
                     lines: dbStation.station_lines.map((sl: any) => sl.line_id),
                     connections: dbStation.station_connections.map((sc: any) => sc.connection_id)

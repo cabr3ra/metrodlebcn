@@ -20,7 +20,7 @@ export function useStations() {
             id,
             name,
             type,
-            position,
+            positions,
             line_orders,
             station_lines ( line_id ),
             station_connections ( connection_id )
@@ -33,7 +33,7 @@ export function useStations() {
                         id: d.id,
                         name: d.name,
                         type: d.type,
-                        position: d.position,
+                        positions: d.positions,
                         lineOrders: d.line_orders,
                         lines: d.station_lines.map((sl: any) => sl.line_id),
                         connections: d.station_connections.map((sc: any) => sc.connection_id)

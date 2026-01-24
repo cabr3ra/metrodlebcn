@@ -30,7 +30,7 @@ const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
   return (
     <div style={gridStyle} className="w-full">
       {/* Station Name */}
-      <div 
+      <div
         style={getAnimDelay(0)}
         className={`h-14 px-4 flex items-center rounded-xl font-bold truncate reveal-cell ${result.nameMatch ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-zinc-900 border border-zinc-800 text-white shadow-sm'}`}
       >
@@ -38,7 +38,7 @@ const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
       </div>
 
       {/* Line - Ajustado para soportar hasta 4 líneas */}
-      <div 
+      <div
         style={getAnimDelay(1)}
         className={`h-14 flex flex-col items-center justify-center rounded-xl reveal-cell ${getBgClass(result.lineMatch)}`}
       >
@@ -50,15 +50,15 @@ const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
       </div>
 
       {/* Position */}
-      <div 
+      <div
         style={getAnimDelay(2)}
         className={`h-14 flex flex-col items-center justify-center rounded-xl reveal-cell text-center ${getBgClass(result.positionMatch)}`}
       >
-        <span className="text-[9px] sm:text-[10px] font-black uppercase leading-tight px-1">{result.station.position}</span>
+        <span className="text-[9px] sm:text-[10px] font-black uppercase leading-tight px-1">{result.displayedPosition}</span>
       </div>
 
       {/* Type */}
-      <div 
+      <div
         style={getAnimDelay(3)}
         className={`h-14 flex flex-col items-center justify-center rounded-xl reveal-cell text-center ${getBgClass(result.typeMatch)}`}
       >
@@ -66,14 +66,14 @@ const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
       </div>
 
       {/* Connections */}
-      <div 
+      <div
         style={getAnimDelay(4)}
         className={`h-14 flex flex-col items-center justify-center rounded-xl reveal-cell ${getBgClass(result.connectionsMatch)}`}
       >
         <div className="flex flex-wrap gap-1 justify-center">
           {result.station.connections.length > 0 ? (
             result.station.connections.map(c => (
-               <TransportIcon key={c} type={c} className="w-4 h-4 sm:w-5 sm:h-5 shadow-sm" />
+              <TransportIcon key={c} type={c} className="w-4 h-4 sm:w-5 sm:h-5 shadow-sm" />
             ))
           ) : (
             <span className="material-symbols-outlined opacity-30 text-[10px]">block</span>
@@ -82,7 +82,7 @@ const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
       </div>
 
       {/* Distance */}
-      <div 
+      <div
         style={getAnimDelay(5)}
         className={`h-14 flex flex-col items-center justify-center rounded-xl reveal-cell ${result.distanceMatch === 0 ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-zinc-900 border border-zinc-800 text-white shadow-sm'}`}
       >

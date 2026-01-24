@@ -8,7 +8,7 @@ export interface Station {
   name: string;
   lines: string[];
   type: StationType;
-  position: Record<string, LinePosition>;
+  positions: Record<string, LinePosition>;
   connections: ConnectionType[];
   lineOrders: Record<string, number>;
 }
@@ -28,6 +28,7 @@ export interface GuessResult {
   connectionsMatch: MatchType;
   distanceMatch: number;
   distanceDirection: 'up' | 'down' | 'none';
+  displayedPosition: string;
 }
 
 export interface GameStats {

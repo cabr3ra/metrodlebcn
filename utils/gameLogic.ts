@@ -13,12 +13,32 @@ export const calculateResult = (guessed: Station, targetStation: Station): Guess
         lineMatch = MatchType.PARTIAL;
     }
 
-    // Posició (Extrem vs Central)
+    // Posició (Extrem vs Central) logic
     let positionMatch = MatchType.WRONG;
-    if (guessed.position === targetStation.position) {
-        positionMatch = MatchType.CORRECT;
+    let displayedPosition = '';
+
+    const guessedValues = Object.values(guessed.positions);
+    const targetValues = Object.values(targetStation.positions);
+
+    // Case 1: Shared Lines - Check strict match on specific lines
+    if (sharedLines.length > 0) {
+        const match = sharedLines.find(l => guessed.positions[l] === targetStation.positions[l]);
+        if (match) {
+            positionMatch = MatchType.CORRECT;
+            displayedPosition = guessed.positions[match];
+        } else {
+            positionMatch = MatchType.WRONG;
+            // Display position of the first shared line to show the context of the error
+            displayedPosition = guessed.positions[sharedLines[0]];
+        }
     } else {
-        positionMatch = MatchType.PARTIAL;
+        // Case 2: No Shared Lines - Check for partial availability
+        const hasOverlap = guessedValues.some(v => targetValues.includes(v));
+        if (hasOverlap) {
+            positionMatch = MatchType.PARTIAL;
+        }
+        // Fallback display
+        displayedPosition = guessedValues[0] || '';
     }
 
     // Tipus d'estació
@@ -66,6 +86,7 @@ export const calculateResult = (guessed: Station, targetStation: Station): Guess
         typeMatch,
         connectionsMatch,
         distanceMatch,
-        distanceDirection
+        distanceDirection,
+        displayedPosition
     };
 };
