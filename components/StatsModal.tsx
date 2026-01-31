@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GuessResult, Station, MatchType } from '../types';
 import { UserStats } from '../hooks/useUserStats';
 
@@ -12,9 +13,12 @@ interface StatsModalProps {
   solveTime: number | null;
   dayNumber: number;
   stats: UserStats | null;
+  gameId?: string;
+  gameName?: string;
 }
 
-const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, t, solveTime, dayNumber, stats }) => {
+const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, t, solveTime, dayNumber, stats, gameId = 'metrodle', gameName = 'Metrodle BCN' }) => {
+  const navigate = useNavigate();
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -61,6 +65,9 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-zinc-900 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-8 duration-500 border border-zinc-800">
+        <div className="bg-zinc-950 p-4 border-b border-zinc-800 text-center">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Estadístiques • {gameName}</span>
+        </div>
         <div className="p-8 text-center border-b border-zinc-800 bg-zinc-900/50">
           <h2 className={`text-4xl font-black uppercase tracking-tighter mb-2 ${won ? 'text-emerald-500' : 'text-zinc-500'}`}>
             {won ? t.congrats : t.almost}
@@ -100,21 +107,56 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
 
 
           <div className="flex flex-col gap-3 pt-4 border-t border-zinc-800">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={copyToClipboard}
-                className="flex-1 h-14 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 border border-zinc-700"
-              >
-                <span className="material-symbols-outlined">content_copy</span>
-                {t.share}
-              </button>
-              <button
-                onClick={shareOnX}
-                title="Twitter / X"
-                className="w-14 h-14 bg-white text-black hover:bg-zinc-200 font-bold rounded-2xl flex items-center justify-center shadow-lg transition-all active:scale-95 flex-shrink-0"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-              </button>
+            <div className="flex items-center gap-2">
+              {/* Parte Izquierda: Compartir (2 botones pequeños iguales) */}
+              <div className="flex-1 flex gap-2">
+                <button
+                  onClick={copyToClipboard}
+                  title={t.share}
+                  className="flex-1 h-14 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl flex items-center justify-center transition-all active:scale-95 border border-zinc-700"
+                >
+                  <span className="material-symbols-outlined">content_copy</span>
+                </button>
+                <button
+                  onClick={shareOnX}
+                  title="Twitter / X"
+                  className="flex-1 h-14 bg-white text-black hover:bg-zinc-200 font-bold rounded-2xl flex items-center justify-center shadow-lg transition-all active:scale-95"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                </button>
+              </div>
+
+              {/* Parte Derecha: Siguiente Juego */}
+              {gameId !== 'ruta' && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    navigate('/ruta');
+                  }}
+                  className="flex-1 h-14 bg-red-600 hover:bg-red-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-red-900/40 group"
+                >
+                  <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">route</span>
+                  <div className="flex flex-col items-start leading-none">
+                    <span className="text-[10px] uppercase tracking-tighter opacity-80">Següent joc</span>
+                    <span className="text-xs font-black italic">RUTA BCN</span>
+                  </div>
+                </button>
+              )}
+              {gameId === 'ruta' && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    navigate('/');
+                  }}
+                  className="flex-1 h-14 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 border border-zinc-700 group"
+                >
+                  <span className="material-symbols-outlined text-xl group-hover:-rotate-12 transition-transform">train</span>
+                  <div className="flex flex-col items-start leading-none">
+                    <span className="text-[10px] uppercase tracking-tighter opacity-80">Tornar al</span>
+                    <span className="text-xs font-black italic">METRODLE</span>
+                  </div>
+                </button>
+              )}
             </div>
           </div>
         </div>

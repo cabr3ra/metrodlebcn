@@ -9,7 +9,7 @@ export interface UserStats extends GameStats {
     userId?: string;
 }
 
-export function useUserStats() {
+export function useUserStats(gameId: string = 'metrodle') {
     const { user } = useAuth();
     const [stats, setStats] = useState<UserStats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -23,6 +23,7 @@ export function useUserStats() {
                 .from('user_stats')
                 .select('*')
                 .eq('user_id', user.id)
+                .eq('game_id', gameId)
                 .maybeSingle();
 
             if (error) throw error;
@@ -79,6 +80,7 @@ export function useUserStats() {
         // We need to upsert into DB
         const payload = {
             user_id: user.id,
+            game_id: gameId,
             games_played: newPlayed,
             wins: newWins,
             current_streak: newStreak,

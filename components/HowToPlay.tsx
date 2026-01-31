@@ -17,61 +17,93 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
-        
+
         <div className="p-6 overflow-y-auto custom-scrollbar space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
               Cada intent compara els següents atributs entre l'estació introduïda i l'estació secreta del dia.
             </p>
-            
-            <h3 className="font-bold uppercase text-xs text-zinc-400 pt-2">{t.attributes}</h3>
-            <ul className="space-y-4">
-              <li className="flex gap-3 text-sm items-start">
-                <span className="material-symbols-outlined text-red-500 mt-0.5">label</span>
+
+            <h3 className="font-bold uppercase text-[10px] text-zinc-500 tracking-[0.2em] mb-4">{t.attributes}</h3>
+            <ul className="space-y-5">
+              <li className="flex gap-4 text-sm items-start">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-red-500">label</span>
+                </div>
                 <div>
-                  <strong className="block">{t.name}:</strong> 
-                  S'il·lumina en verd si el nom és el correcte, encara que altres atributs no coincideixin.
+                  <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.name}</strong>
+                  <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
+                    S'il·lumina en verd si el nom és el correcte, encara que altres atributs no coincideixin.
+                  </p>
                 </div>
               </li>
-              <li className="flex gap-3 text-sm items-start">
-                <span className="material-symbols-outlined text-red-500 mt-0.5">route</span>
+              <li className="flex gap-4 text-sm items-start">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-red-500">route</span>
+                </div>
                 <div>
-                  <strong className="block">{t.line}:</strong> 
-                  Línies de metro que passen per l'estació. Verd si coincideixen totes, groc si en comparteixen alguna.
+                  <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.line}</strong>
+                  <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
+                    Línies de metro que passen per l'estació. Verd si coincideixen totes, groc si en comparteixen alguna.
+                  </p>
                 </div>
               </li>
-              <li className="flex gap-3 text-sm items-start">
-                <span className="material-symbols-outlined text-red-500 mt-0.5">explore</span>
+              <li className="flex gap-4 text-sm items-start">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-red-500">explore</span>
+                </div>
                 <div>
-                  <strong className="block">{t.position}:</strong> 
-                  Compara si l'estació està en un extrem o a la zona central de la línia.
+                  <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.position}</strong>
+                  <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
+                    Compara si l'estació està en un extrem o a la zona central de la línia.
+                  </p>
                 </div>
               </li>
-              <li className="flex gap-3 text-sm items-start">
-                <span className="material-symbols-outlined text-red-500 mt-0.5">architecture</span>
+              <li className="flex gap-4 text-sm items-start">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-red-500">architecture</span>
+                </div>
                 <div>
-                  <strong className="block">{t.type}:</strong> 
-                  L'estructura de l'estació: Subterrània, Superfície o Elevada.
+                  <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.type}</strong>
+                  <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
+                    L'estructura de l'estació: Subterrània, Superfície o Elevada.
+                  </p>
                 </div>
               </li>
-              <li className="flex gap-3 text-sm items-start">
-                <span className="material-symbols-outlined text-red-500 mt-0.5">hub</span>
-                <div className="flex flex-col">
-                  <strong>{t.connections}:</strong> 
-                  <span>Connexions fora del metro (FGC, Rodalies, Tram, Bus, etc.):</span>
-                  <div className="flex gap-2 mt-2 items-center">
-                    <TransportIcon type="FGC" className="w-5 h-5" />
-                    <TransportIcon type="Rodalies" className="w-5 h-5" />
-                    <TransportIcon type="Tram" className="w-5 h-5" />
-                    <TransportIcon type="Bus" className="w-5 h-5" />
+              <li className="flex gap-4 text-sm items-start">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-red-500">hub</span>
+                </div>
+                <div className="flex flex-col flex-1">
+                  <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.connections}</strong>
+                  <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
+                    Connexions fora del metro (FGC, Rodalies, Tram, Bus, etc.):
+                  </p>
+                  <div className="flex gap-2 mt-3 items-center">
+                    <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                      <TransportIcon type="FGC" className="w-4 h-4" />
+                    </div>
+                    <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                      <TransportIcon type="Rodalies" className="w-4 h-4" />
+                    </div>
+                    <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                      <TransportIcon type="Tram" className="w-4 h-4" />
+                    </div>
+                    <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                      <TransportIcon type="Bus" className="w-4 h-4" />
+                    </div>
                   </div>
                 </div>
               </li>
-              <li className="flex gap-3 text-sm items-start">
-                <span className="material-symbols-outlined text-red-500 mt-0.5">straighten</span>
+              <li className="flex gap-4 text-sm items-start">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-red-500">straighten</span>
+                </div>
                 <div>
-                  <strong className="block">{t.distance}:</strong> 
-                  Distància en nombre de parades respecte a l'estació secreta seguint la línia més curta.
+                  <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.distance}</strong>
+                  <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
+                    Distància en nombre de parades respecte a l'estació secreta seguint la línia més curta.
+                  </p>
                 </div>
               </li>
             </ul>
@@ -94,7 +126,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
         </div>
 
         <div className="p-6 bg-zinc-50 dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-800">
-          <button 
+          <button
             onClick={onClose}
             className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/20 active:scale-95"
           >

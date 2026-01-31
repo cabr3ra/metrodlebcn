@@ -10,7 +10,7 @@ import { calculateResult } from '../utils/gameLogic';
 // Ideally this logic should be a shared utility.
 // For now, we assume we just need to reconstruct the objects.
 
-export function useGameState(date: string, targetStation: Station | null) {
+export function useGameState(date: string, targetStation: Station | null, gameId: string = 'metrodle') {
     const { user } = useAuth();
     const [guesses, setGuesses] = useState<GuessResult[]>([]);
     const [loading, setLoading] = useState(true);
@@ -30,6 +30,7 @@ export function useGameState(date: string, targetStation: Station | null) {
                     .select('*')
                     .eq('user_id', user!.id)
                     .eq('date', date)
+                    .eq('game_id', gameId)
                     .maybeSingle();
 
                 if (error) console.error('Error loading game session:', error);
@@ -74,6 +75,7 @@ export function useGameState(date: string, targetStation: Station | null) {
             user_id: user.id,
             date,
             station_id: targetStation?.id,
+            game_id: gameId,
             guesses: newGuessIds,
             won,
             completed: won || newGuessIds.length >= 6,
