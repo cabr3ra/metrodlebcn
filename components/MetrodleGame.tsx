@@ -11,14 +11,16 @@ import { useUserStats } from '../hooks/useUserStats';
 import { useStations } from '../hooks/useStations';
 import { calculateResult } from '../utils/gameLogic';
 
+import { useLanguage } from '../context/LanguageContext';
+
 interface MetrodleGameProps {
-    t: any;
     showStats: boolean;
     setShowStats: (show: boolean) => void;
     onGameOver: (over: boolean) => void;
 }
 
-const MetrodleGame: React.FC<MetrodleGameProps> = ({ t, showStats, setShowStats, onGameOver }) => {
+const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, onGameOver }) => {
+    const { t } = useLanguage();
     const { station: dailyStation, dayNumber: fetchedDayNumber, loading: stationLoading } = useDailyStation();
     const today = new Date().toISOString().split('T')[0];
     const {
@@ -110,7 +112,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ t, showStats, setShowStats,
                 {t.day} #{dayNumber}
             </div>
 
-            <GameGrid guesses={guesses} maxAttempts={6} t={t} />
+            <GameGrid guesses={guesses} maxAttempts={6} />
 
             {!gameOver && (
                 <div className="w-full mt-auto py-6 sticky bottom-0 bg-zinc-950/30 backdrop-blur-md border-t border-white/5">
@@ -119,7 +121,6 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ t, showStats, setShowStats,
                         onSelect={handleGuess}
                         searchTerm={searchTerm}
                         setSearchTerm={setSearchTerm}
-                        t={t}
                         show={suggestions.length > 0}
                     />
                 </div>
@@ -145,7 +146,6 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ t, showStats, setShowStats,
                 guesses={guesses}
                 won={won}
                 target={targetStation}
-                t={t}
                 solveTime={solveTime}
                 dayNumber={dayNumber}
                 stats={stats}

@@ -3,12 +3,13 @@ import React from 'react';
 import { Station, GuessResult } from '../types';
 import LineIcon from './LineIcon';
 
+import { useLanguage } from '../context/LanguageContext';
+
 interface SearchSuggestionsProps {
     suggestions: Station[];
     onSelect: (station: Station) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
-    t: any;
     show: boolean;
 }
 
@@ -17,9 +18,9 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
     onSelect,
     searchTerm,
     setSearchTerm,
-    t,
     show
 }) => {
+    const { t } = useLanguage();
     return (
         <div className="relative">
             {show && suggestions.length > 0 && (

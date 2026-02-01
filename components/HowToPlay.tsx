@@ -2,18 +2,20 @@
 import React from 'react';
 import TransportIcon from './TransportIcon';
 
+import { useLanguage } from '../context/LanguageContext';
+
 interface HowToPlayProps {
   onClose: () => void;
-  t: any;
 }
 
-const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
+const HowToPlay: React.FC<HowToPlayProps> = ({ onClose }) => {
+  const { t } = useLanguage();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
-        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
+        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center text-zinc-900 dark:text-white">
           <h2 className="text-2xl font-black uppercase tracking-tighter">{t.howToPlay}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full">
+          <button onClick={onClose} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -21,7 +23,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
         <div className="p-6 overflow-y-auto custom-scrollbar space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Cada intent compara els següents atributs entre l'estació introduïda i l'estació secreta del dia.
+              {t.howToDesc}
             </p>
 
             <h3 className="font-bold uppercase text-[10px] text-zinc-500 tracking-[0.2em] mb-4">{t.attributes}</h3>
@@ -33,7 +35,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
                 <div>
                   <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.name}</strong>
                   <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
-                    S'il·lumina en verd si el nom és el correcte, encara que altres atributs no coincideixin.
+                    {t.nameDesc}
                   </p>
                 </div>
               </li>
@@ -44,7 +46,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
                 <div>
                   <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.line}</strong>
                   <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
-                    Línies de metro que passen per l'estació. Verd si coincideixen totes, groc si en comparteixen alguna.
+                    {t.lineDesc}
                   </p>
                 </div>
               </li>
@@ -55,7 +57,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
                 <div>
                   <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.position}</strong>
                   <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
-                    Compara si l'estació està en un extrem o a la zona central de la línia.
+                    {t.posDesc}
                   </p>
                 </div>
               </li>
@@ -66,7 +68,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
                 <div>
                   <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.type}</strong>
                   <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
-                    L'estructura de l'estació: Subterrània, Superfície o Elevada.
+                    {t.typeDesc}
                   </p>
                 </div>
               </li>
@@ -77,7 +79,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
                 <div className="flex flex-col flex-1">
                   <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.connections}</strong>
                   <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
-                    Connexions fora del metro (FGC, Rodalies, Tram, Bus, etc.):
+                    {t.connDesc}
                   </p>
                   <div className="flex gap-2 mt-3 items-center">
                     <div className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
@@ -102,7 +104,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({ onClose, t }) => {
                 <div>
                   <strong className="block text-zinc-900 dark:text-white mb-0.5">{t.distance}</strong>
                   <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed text-xs">
-                    Distància en nombre de parades respecte a l'estació secreta seguint la línia més curta.
+                    {t.distDesc}
                   </p>
                 </div>
               </li>

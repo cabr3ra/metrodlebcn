@@ -4,13 +4,15 @@ import { useUserStats } from '../hooks/useUserStats';
 import StatsModal from './StatsModal';
 import { STATIONS } from '../constants';
 
+import { useLanguage } from '../context/LanguageContext';
+
 interface RutaGameProps {
-    t: any;
     showStats: boolean;
     setShowStats: (show: boolean) => void;
 }
 
-const RutaGame: React.FC<RutaGameProps> = ({ t, showStats, setShowStats }) => {
+const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats }) => {
+    const { t } = useLanguage();
     const { stats } = useUserStats('ruta');
 
     return (
@@ -19,10 +21,10 @@ const RutaGame: React.FC<RutaGameProps> = ({ t, showStats, setShowStats }) => {
                 <span className="material-symbols-outlined text-6xl text-red-500 mb-6 animate-pulse">route</span>
                 <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-white">Ruta BCN</h2>
                 <p className="text-zinc-400 mb-8 leading-relaxed">
-                    Preparat per al següent nivell? Aviat podràs demostrar que coneixes el metro de Barcelona millor que ningú.
+                    {t.routeDesc}
                 </p>
                 <div className="inline-block px-6 py-2 bg-zinc-800 rounded-full text-xs font-bold text-zinc-500 uppercase tracking-widest border border-zinc-700">
-                    Pròximament
+                    {t.comingSoon}
                 </div>
             </div>
 
@@ -31,7 +33,6 @@ const RutaGame: React.FC<RutaGameProps> = ({ t, showStats, setShowStats }) => {
                 guesses={[]}
                 won={false}
                 target={STATIONS[0]}
-                t={t}
                 solveTime={null}
                 dayNumber={0}
                 stats={stats}

@@ -4,11 +4,14 @@ import { GuessResult, MatchType } from '../types';
 import TransportIcon from './TransportIcon';
 import LineIcon from './LineIcon';
 
+import { useLanguage } from '../context/LanguageContext';
+
 interface AttemptRowProps {
   result: GuessResult;
 }
 
 const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
+  const { translateValue } = useLanguage();
   const getBgClass = (type: MatchType) => {
     switch (type) {
       case MatchType.CORRECT: return 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20';
@@ -54,7 +57,7 @@ const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
         style={getAnimDelay(2)}
         className={`h-14 flex flex-col items-center justify-center rounded-xl reveal-cell text-center ${getBgClass(result.positionMatch)}`}
       >
-        <span className="text-[9px] sm:text-[10px] font-black uppercase leading-tight px-1">{result.displayedPosition}</span>
+        <span className="text-[9px] sm:text-[10px] font-black uppercase leading-tight px-1">{translateValue(result.displayedPosition)}</span>
       </div>
 
       {/* Type */}
@@ -62,7 +65,7 @@ const AttemptRow: React.FC<AttemptRowProps> = ({ result }) => {
         style={getAnimDelay(3)}
         className={`h-14 flex flex-col items-center justify-center rounded-xl reveal-cell text-center ${getBgClass(result.typeMatch)}`}
       >
-        <span className="text-[9px] sm:text-[10px] font-black uppercase leading-tight px-1">{result.station.type}</span>
+        <span className="text-[9px] sm:text-[10px] font-black uppercase leading-tight px-1">{translateValue(result.station.type)}</span>
       </div>
 
       {/* Connections */}

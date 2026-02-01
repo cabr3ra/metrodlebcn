@@ -4,13 +4,15 @@ import { useUserStats } from '../hooks/useUserStats';
 import StatsModal from './StatsModal';
 import { STATIONS } from '../constants';
 
+import { useLanguage } from '../context/LanguageContext';
+
 interface PracticeGameProps {
-    t: any;
     showStats: boolean;
     setShowStats: (show: boolean) => void;
 }
 
-const PracticeGame: React.FC<PracticeGameProps> = ({ t, showStats, setShowStats }) => {
+const PracticeGame: React.FC<PracticeGameProps> = ({ showStats, setShowStats }) => {
+    const { t } = useLanguage();
     const { stats } = useUserStats('train');
 
     return (
@@ -18,14 +20,14 @@ const PracticeGame: React.FC<PracticeGameProps> = ({ t, showStats, setShowStats 
             <div className="mb-8 p-12 bg-zinc-900/50 rounded-3xl border border-zinc-800 backdrop-blur-sm max-w-lg animate-in fade-in zoom-in duration-500">
                 <span className="material-symbols-outlined text-6xl text-red-500 mb-6 animate-pulse">fitness_center</span>
                 <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-white">
-                    {t.practiceMode || (t.title === 'Metrodle BCN' ? 'Modo Pràctica' : 'Modo Práctica')}
+                    {t.practiceMode}
                 </h2>
                 <p className="text-zinc-400 mb-8 leading-relaxed">
-                    Entrena les teves habilitats sense límit de partides diàries. Ideal per conèixer totes les estacions de la xarxa.
+                    {t.practiceDesc}
                 </p>
                 <div className="flex flex-col gap-4">
                     <div className="inline-block px-6 py-2 bg-zinc-800 rounded-full text-xs font-bold text-zinc-500 uppercase tracking-widest border border-zinc-700">
-                        Pròximament
+                        {t.comingSoon}
                     </div>
                 </div>
             </div>
@@ -35,12 +37,11 @@ const PracticeGame: React.FC<PracticeGameProps> = ({ t, showStats, setShowStats 
                 guesses={[]}
                 won={false}
                 target={STATIONS[0]}
-                t={t}
                 solveTime={null}
                 dayNumber={0}
                 stats={stats}
                 gameId="train"
-                gameName={t.title === 'Metrodle BCN' ? 'Mode Pràctica' : 'Modo Práctica'}
+                gameName={t.practiceMode}
             />}
         </div>
     );

@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { GuessResult, Station, MatchType } from '../types';
 import { UserStats } from '../hooks/useUserStats';
 
+import { useLanguage } from '../context/LanguageContext';
+
 interface StatsModalProps {
   guesses: GuessResult[];
   won: boolean;
   target: Station;
   onClose: () => void;
-  t: any;
   solveTime: number | null;
   dayNumber: number;
   stats: UserStats | null;
@@ -17,7 +18,8 @@ interface StatsModalProps {
   gameName?: string;
 }
 
-const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, t, solveTime, dayNumber, stats, gameId = 'metrodle', gameName = 'Metrodle BCN' }) => {
+const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, solveTime, dayNumber, stats, gameId = 'metrodle', gameName = 'Metrodle BCN' }) => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -66,7 +68,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-zinc-900 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-8 duration-500 border border-zinc-800">
         <div className="bg-zinc-950 p-4 border-b border-zinc-800 text-center">
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Estadístiques • {gameName}</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">{t.statsLabel} • {gameName}</span>
         </div>
         <div className="p-8 text-center border-b border-zinc-800 bg-zinc-900/50">
           <h2 className={`text-4xl font-black uppercase tracking-tighter mb-2 ${won ? 'text-emerald-500' : 'text-zinc-500'}`}>
@@ -136,9 +138,9 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
                   className="flex-1 h-14 bg-red-600 hover:bg-red-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-red-900/40 group"
                 >
                   <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">route</span>
-                  <div className="flex flex-col items-start leading-none">
-                    <span className="text-[10px] uppercase tracking-tighter opacity-80">Següent joc</span>
-                    <span className="text-xs font-black italic">RUTA BCN</span>
+                  <div className="flex flex-col items-start leading-none text-left">
+                    <span className="text-[10px] uppercase tracking-tighter opacity-80">{t.nextGame}</span>
+                    <span className="text-xs font-black italic uppercase">RUTA BCN</span>
                   </div>
                 </button>
               )}
@@ -151,9 +153,9 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
                   className="flex-1 h-14 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 border border-zinc-700 group"
                 >
                   <span className="material-symbols-outlined text-xl group-hover:-rotate-12 transition-transform">train</span>
-                  <div className="flex flex-col items-start leading-none">
-                    <span className="text-[10px] uppercase tracking-tighter opacity-80">Tornar al</span>
-                    <span className="text-xs font-black italic">METRODLE</span>
+                  <div className="flex flex-col items-start leading-none text-left">
+                    <span className="text-[10px] uppercase tracking-tighter opacity-80">{t.backTo}</span>
+                    <span className="text-xs font-black italic uppercase">METRODLE</span>
                   </div>
                 </button>
               )}
