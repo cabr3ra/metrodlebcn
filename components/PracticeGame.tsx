@@ -26,9 +26,12 @@ const PracticeGame: React.FC<PracticeGameProps> = ({ showStats, setShowStats }) 
                     {t.practiceDesc}
                 </p>
                 <div className="flex flex-col gap-4">
-                    <div className="inline-block px-6 py-2 bg-zinc-800 rounded-full text-xs font-bold text-zinc-500 uppercase tracking-widest border border-zinc-700">
-                        {t.comingSoon}
-                    </div>
+                    <button
+                        onClick={() => window.location.href = '#/'}
+                        className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl transition-all active:scale-95 shadow-lg shadow-red-900/20"
+                    >
+                        {t.backTo} METRODLE
+                    </button>
                 </div>
             </div>
 
@@ -40,8 +43,7 @@ const PracticeGame: React.FC<PracticeGameProps> = ({ showStats, setShowStats }) 
                 solveTime={null}
                 dayNumber={0}
                 stats={stats}
-                gameId="train"
-                gameName={t.practiceMode}
+                gameType="metrodle"
             />}
         </div>
     );

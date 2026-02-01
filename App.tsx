@@ -58,6 +58,7 @@ const AppContent: React.FC<{
             <RutaGame
               showStats={showStats}
               setShowStats={setShowStats}
+              onGameOver={setIsGameOverLocal}
             />
           } />
           <Route path="/train" element={

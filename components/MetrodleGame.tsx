@@ -26,7 +26,9 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
     const {
         guesses: remoteGuesses,
         persistGuess,
-        isCompleted
+        isCompleted,
+        startTime: sessionStartTime,
+        solveTime: remoteSolveTime
     } = useGameState(today, dailyStation, 'metrodle');
 
     const { stats, updateStats } = useUserStats('metrodle');
@@ -38,7 +40,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
     const [searchTerm, setSearchTerm] = useState('');
     const [gameOver, setGameOver] = useState(false);
     const [won, setWon] = useState(false);
-    const [startTime] = useState<number>(Date.now());
+    const [gameStartTime, setGameStartTime] = useState<number | null>(null);
     const [solveTime, setSolveTime] = useState<number | null>(null);
 
     // Sync Daily Station
@@ -62,8 +64,10 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 setGameOver(true);
                 onGameOver(true);
             }
+            if (sessionStartTime) setGameStartTime(sessionStartTime);
+            if (remoteSolveTime) setSolveTime(remoteSolveTime);
         }
-    }, [remoteGuesses, isCompleted, onGameOver]);
+    }, [remoteGuesses, isCompleted, onGameOver, remoteSolveTime, sessionStartTime]);
 
     const suggestions = useMemo(() => {
         if (searchTerm.length < 1) return [];
@@ -75,6 +79,13 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
 
     const handleGuess = (station: Station) => {
         if (gameOver) return;
+
+        let start = gameStartTime;
+        if (!start) {
+            start = Date.now();
+            setGameStartTime(start);
+        }
+
         const result = calculateResult(station, targetStation);
         const newGuesses = [...guesses, result];
         setGuesses(newGuesses);
@@ -85,13 +96,13 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
         const isFinished = isWin || isLoss;
 
         const guessIds = newGuesses.map(g => g.station.id);
-        persistGuess(guessIds, isWin);
+        const timeSpent = Math.floor((Date.now() - start!) / 1000);
+        persistGuess(guessIds, isWin, timeSpent);
 
         if (isFinished) {
             setGameOver(true);
             onGameOver(true);
             if (isWin) setWon(true);
-            const timeSpent = Math.floor((Date.now() - startTime) / 1000);
             setSolveTime(timeSpent);
             updateStats(isWin, newGuesses.length);
             setTimeout(() => setShowStats(true), 1500);
@@ -127,7 +138,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
             )}
 
             {gameOver && (
-                <div className="mt-8 p-6 bg-zinc-900 rounded-2xl text-center w-full border border-zinc-800 animate-in fade-in zoom-in-95 duration-500">
+                <div className="mt-10 p-6 bg-zinc-900 rounded-2xl text-center w-full max-w-sm border border-zinc-800 animate-in fade-in zoom-in-95 duration-500">
                     <h2 className="text-2xl font-bold mb-2">
                         {won ? t.won : t.lost}
                     </h2>
@@ -148,6 +159,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 target={targetStation}
                 solveTime={solveTime}
                 dayNumber={dayNumber}
+                currentAttempts={guesses.length}
                 stats={stats}
             />}
         </div>

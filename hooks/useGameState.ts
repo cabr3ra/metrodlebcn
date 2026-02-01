@@ -16,6 +16,8 @@ export function useGameState(date: string, targetStation: Station | null, gameId
     const [loading, setLoading] = useState(true);
     const [dbSessionId, setDbSessionId] = useState<string | null>(null);
     const [isCompleted, setIsCompleted] = useState(false);
+    const [startTime, setStartTime] = useState<number | null>(null);
+    const [solveTimeState, setSolveTimeState] = useState<number | null>(null);
 
     useEffect(() => {
         if (!user || !date || !targetStation) return;
@@ -38,6 +40,8 @@ export function useGameState(date: string, targetStation: Station | null, gameId
                 if (mounted && data) {
                     setDbSessionId(data.id);
                     setIsCompleted(data.completed);
+                    setStartTime(new Date(data.created_at).getTime());
+                    if (data.duration_seconds) setSolveTimeState(data.duration_seconds);
 
                     // Hydrate guesses
                     if (data.guesses && Array.isArray(data.guesses)) {
@@ -68,7 +72,7 @@ export function useGameState(date: string, targetStation: Station | null, gameId
         return () => { mounted = false; };
     }, [user, date, targetStation]);
 
-    const persistGuess = async (newGuessIds: string[], won: boolean) => {
+    const persistGuess = async (newGuessIds: string[], won: boolean, duration?: number) => {
         if (!user) return;
 
         const payload = {
@@ -79,6 +83,7 @@ export function useGameState(date: string, targetStation: Station | null, gameId
             guesses: newGuessIds,
             won,
             completed: won || newGuessIds.length >= 6,
+            duration_seconds: duration !== undefined ? duration : solveTimeState,
             updated_at: new Date().toISOString()
         };
 
@@ -95,6 +100,8 @@ export function useGameState(date: string, targetStation: Station | null, gameId
         guesses, // <--- Added this
         persistGuess,
         dbSessionId,
-        isCompleted
+        isCompleted,
+        startTime,
+        solveTime: solveTimeState
     };
 }

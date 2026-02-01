@@ -60,6 +60,12 @@ interface Translation {
     extreme: string;
     central: string;
     loading: string;
+    stops: string;
+    nextStop: string;
+    pathCompleted: string;
+    isNotNext: string;
+    errors: string;
+    attempts: string;
 }
 
 const translations: Record<Language, Translation> = {
@@ -94,7 +100,7 @@ const translations: Record<Language, Translation> = {
         distShort: "Dist.",
         practiceMode: "Mode Pràctica",
         comingSoon: "Pròximament",
-        routeDesc: "Preparat per al següent nivell? Aviat podràs demostrar que coneixes el metro de Barcelona millor que ningú.",
+        routeDesc: "Planifica la ruta més curta entre dues estacions. Un nou repte cada dia!",
         practiceDesc: "Entrena les teves habilitats sense límit de partides diàries. Ideal per conèixer totes les estacions de la xarxa.",
         attributes: "Atributs",
         name: "Nom",
@@ -119,7 +125,13 @@ const translations: Record<Language, Translation> = {
         surface: "Superfície",
         extreme: "Extrem",
         central: "Central",
-        loading: "Carregant..."
+        loading: "Carregant...",
+        stops: "parades",
+        nextStop: "Propera parada...",
+        pathCompleted: "Ruta completada!",
+        isNotNext: "no és la propera parada",
+        errors: "Errors",
+        attempts: "Intents"
     },
     es: {
         title: "Metrodle BCN",
@@ -152,7 +164,7 @@ const translations: Record<Language, Translation> = {
         distShort: "Dist.",
         practiceMode: "Modo Práctica",
         comingSoon: "Próximamente",
-        routeDesc: "¿Preparado para el siguiente nivel? Pronto podrás demostrar que conoces el metro de Barcelona mejor que nadie.",
+        routeDesc: "Planifica la ruta más corta entre dos estaciones. ¡Un nuevo reto cada día!",
         practiceDesc: "Entrena tus habilidades sin límite de partidas diarias. Ideal para conocer todas las estaciones de la red.",
         attributes: "Atributos",
         name: "Nombre",
@@ -177,7 +189,13 @@ const translations: Record<Language, Translation> = {
         surface: "Superficie",
         extreme: "Extremo",
         central: "Central",
-        loading: "Cargando..."
+        loading: "Cargando...",
+        stops: "paradas",
+        nextStop: "Próxima parada...",
+        pathCompleted: "¡Ruta completada!",
+        isNotNext: "no es la próxima parada",
+        errors: "Errores",
+        attempts: "Intentos"
     },
     en: {
         title: "Metrodle BCN",
@@ -210,7 +228,7 @@ const translations: Record<Language, Translation> = {
         distShort: "Dist.",
         practiceMode: "Practice Mode",
         comingSoon: "Coming Soon",
-        routeDesc: "Ready for the next level? Soon you'll be able to prove you know the Barcelona metro better than anyone.",
+        routeDesc: "Plan the shortest route between two stations. A new challenge every day!",
         practiceDesc: "Train your skills with no daily limits. Ideal to get to know all the network stations.",
         attributes: "Attributes",
         name: "Name",
@@ -235,7 +253,13 @@ const translations: Record<Language, Translation> = {
         surface: "Surface",
         extreme: "Terminal",
         central: "Central",
-        loading: "Loading..."
+        loading: "Loading...",
+        stops: "stops",
+        nextStop: "Next stop...",
+        pathCompleted: "Path completed!",
+        isNotNext: "is not the next stop",
+        errors: "Errors",
+        attempts: "Attempts"
     }
 };
 

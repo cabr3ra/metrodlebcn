@@ -7,6 +7,12 @@ body {
   overflow-x: hidden;
 }
 
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
 body::before {
   content: "";
   position: fixed;

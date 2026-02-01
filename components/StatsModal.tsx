@@ -14,11 +14,13 @@ interface StatsModalProps {
   solveTime: number | null;
   dayNumber: number;
   stats: UserStats | null;
-  gameId?: string;
-  gameName?: string;
+  gameType?: 'metrodle' | 'ruta'; // Changed from gameId
+  origin?: Station;
+  errorCount?: number;
+  currentAttempts?: number;
 }
 
-const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, solveTime, dayNumber, stats, gameId = 'metrodle', gameName = 'Metrodle BCN' }) => {
+const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, solveTime, dayNumber, stats, gameType = 'metrodle', origin, errorCount = 0, currentAttempts }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const formatTime = (seconds: number) => {
@@ -29,8 +31,14 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
 
   const getShareText = () => {
     // ... same logic
-    const attempts = won ? guesses.length : 'X';
     const timeStr = solveTime ? `⏱️ ${formatTime(solveTime)}` : '';
+
+    if (gameType === 'ruta') {
+      const attempts = currentAttempts || 0;
+      return `Ruta BCN #${dayNumber} 🚇\n${won ? 'Completado' : 'X'} - ${attempts} ${t.attempts.toLowerCase()}\n${timeStr}\n\n📲 metrodlebcn.app\n#RutaBCN #Barcelona #Metro`;
+    }
+
+    const attempts = won ? guesses.length : 'X';
     const grid = guesses.map(g => {
       let row = '';
       row += g.nameMatch ? '🟩' : '⬛';
@@ -58,8 +66,14 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
   };
 
   const openInMaps = () => {
-    const query = encodeURIComponent(`Metro ${target.name} Barcelona`);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    if (gameType === 'ruta' && origin) {
+      const originQuery = encodeURIComponent(`Metro ${origin.name} Barcelona`);
+      const destQuery = encodeURIComponent(`Metro ${target.name} Barcelona`);
+      window.open(`https://www.google.com/maps/dir/?api=1&origin=${originQuery}&destination=${destQuery}&travelmode=transit`, '_blank');
+    } else {
+      const query = encodeURIComponent(`Metro ${target.name} Barcelona`);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    }
   };
 
   const winPct = stats?.played ? Math.round((stats.wins / stats.played) * 100) : 0;
@@ -68,7 +82,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-zinc-900 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-8 duration-500 border border-zinc-800">
         <div className="bg-zinc-950 p-4 border-b border-zinc-800 text-center">
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">{t.statsLabel} • {gameName}</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">{t.statsLabel} • {gameType === 'metrodle' ? 'METRODLE' : 'RUTA BCN'}</span>
         </div>
         <div className="p-8 text-center border-b border-zinc-800 bg-zinc-900/50">
           <h2 className={`text-4xl font-black uppercase tracking-tighter mb-2 ${won ? 'text-emerald-500' : 'text-zinc-500'}`}>
@@ -88,7 +102,12 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
         </div>
 
         <div className="p-8 space-y-8">
-          <div className="grid grid-cols-4 gap-4">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-5 gap-2">
+            <div className="text-center">
+              <p className="text-3xl font-black text-red-500">{currentAttempts || (guesses.length > 0 ? guesses.length : 0)}</p>
+              <p className="text-[10px] uppercase font-bold text-zinc-500">{t.attempts}</p>
+            </div>
             <div className="text-center">
               <p className="text-3xl font-black text-white">{stats?.played || 0}</p>
               <p className="text-[10px] uppercase font-bold text-zinc-500">{t.games}</p>
@@ -129,7 +148,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
               </div>
 
               {/* Parte Derecha: Siguiente Juego */}
-              {gameId !== 'ruta' && (
+              {gameType !== 'ruta' && (
                 <button
                   onClick={() => {
                     onClose();
@@ -144,7 +163,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
                   </div>
                 </button>
               )}
-              {gameId === 'ruta' && (
+              {gameType === 'ruta' && (
                 <button
                   onClick={() => {
                     onClose();
@@ -152,7 +171,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
                   }}
                   className="flex-1 h-14 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 border border-zinc-700 group"
                 >
-                  <span className="material-symbols-outlined text-xl group-hover:-rotate-12 transition-transform">train</span>
+                  <span className="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">train</span>
                   <div className="flex flex-col items-start leading-none text-left">
                     <span className="text-[10px] uppercase tracking-tighter opacity-80">{t.backTo}</span>
                     <span className="text-xs font-black italic uppercase">METRODLE</span>

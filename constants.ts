@@ -157,7 +157,7 @@ export const STATIONS: Station[] = [
   { id: '132', name: 'El Prat Estació', lines: ['L9S'], type: 'Subterrània', positions: { L9S: 'Central' }, connections: ['Rodalies'], lineOrders: { L9S: 6 } },
   { id: '133', name: 'Les Moreres', lines: ['L9S'], type: 'Subterrània', positions: { L9S: 'Central' }, connections: [], lineOrders: { L9S: 7 } },
   { id: '134', name: 'Mercabarna', lines: ['L9S'], type: 'Subterrània', positions: { L9S: 'Central' }, connections: [], lineOrders: { L9S: 8 } },
-  { id: '134', name: 'Parc Logístic', lines: ['L9S'], type: 'Subterrània', positions: { L9S: 'Central' }, connections: [], lineOrders: { L9S: 9 } },
+  { id: '136', name: 'Parc Logístic', lines: ['L9S'], type: 'Subterrània', positions: { L9S: 'Central' }, connections: [], lineOrders: { L9S: 9 } },
   { id: '135', name: 'Fira', lines: ['L9S'], type: 'Subterrània', positions: { L9S: 'Central' }, connections: [], lineOrders: { L9S: 10 } },
   { id: '137', name: 'Can Tries | Gornal', lines: ['L9S', 'L10S'], type: 'Subterrània', positions: { L9S: 'Extrem', L10S: 'Extrem' }, connections: [], lineOrders: { L9S: 12, L10S: 9 } },
   { id: '138', name: 'ZAL | Riu Vell', lines: ['L10S'], type: 'Superfície', positions: { L10S: 'Extrem' }, connections: [], lineOrders: { L10S: 1 } },

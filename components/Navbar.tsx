@@ -52,6 +52,13 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenHowTo, onOpenStats, onOpenSetting
             <span className="material-symbols-outlined text-[24px] text-zinc-600 dark:text-zinc-400 group-hover:text-red-500 transition-colors">fitness_center</span>
           </button>
           <button
+            onClick={() => navigate('/ruta')}
+            className="w-11 h-11 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group flex items-center justify-center"
+            title="Ruta BCN"
+          >
+            <span className="material-symbols-outlined text-[24px] text-zinc-600 dark:text-zinc-400 group-hover:text-red-500 transition-colors">route</span>
+          </button>
+          <button
             onClick={onOpenSettings}
             className="w-11 h-11 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group flex items-center justify-center"
             title={t.settings}
