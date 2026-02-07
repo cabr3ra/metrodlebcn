@@ -83,6 +83,7 @@ interface Translation {
     accept: string;
     decline: string;
     cookieBannerText: string;
+    contact: string;
 }
 
 const translations: Record<Language, Translation> = {
@@ -165,7 +166,8 @@ const translations: Record<Language, Translation> = {
         cookiesContent: "Utilitzem cookies per personalitzar el contingut, els anuncis i analitzar el trànsit. Les cookies de tercers (com les de Google) s'utilitzen per oferir anuncis basats en les teves visites prèvies a aquesta o altres webs. Pots configurar-les o rebutjar-les des dels ajustos del teu navegador.",
         accept: "Acceptar",
         decline: "Rebutjar",
-        cookieBannerText: "Fem servir cookies pròpies i de tercers per millorar la teva experiència i mostrar-te publicitat relacionada amb les teves preferències."
+        cookieBannerText: "Fem servir cookies pròpies i de tercers per millorar la teva experiència i mostrar-te publicitat relacionada amb les teves preferències.",
+        contact: "Contacte"
     },
     es: {
         title: "Metrodle BCN",
@@ -246,7 +248,8 @@ const translations: Record<Language, Translation> = {
         cookiesContent: "Utilizamos cookies para personalizar el contenido, los anuncios y analizar el tráfico. Las cookies de terceros (como las de Google) se utilizan para ofrecer anuncios basados en tus visitas previas a esta u otras webs. Puedes configurarlas o rechazarlas desde los ajustes de tu navegador.",
         accept: "Aceptar",
         decline: "Rechazar",
-        cookieBannerText: "Utilizamos cookies propias y de terceros para mejorar tu experiencia y mostrarte publicidad relacionada con tus preferencias."
+        cookieBannerText: "Utilizamos cookies propias y de terceros para mejorar tu experiencia y mostrarte publicidad relacionada con tus preferencias.",
+        contact: "Contacto"
     },
     en: {
         title: "Metrodle BCN",
@@ -327,7 +330,8 @@ const translations: Record<Language, Translation> = {
         cookiesContent: "We use cookies to personalize content, ads and analyze traffic. Third-party cookies (such as Google's) are used to serve ads based on your previous visits to this or other websites. You can configure or reject them from your browser settings.",
         accept: "Accept",
         decline: "Decline",
-        cookieBannerText: "We use own and third-party cookies to improve your experience and show you advertising related to your preferences."
+        cookieBannerText: "We use own and third-party cookies to improve your experience and show you advertising related to your preferences.",
+        contact: "Contact"
     }
 };
 

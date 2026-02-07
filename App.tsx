@@ -12,6 +12,7 @@ import PracticeGame from './components/PracticeGame';
 import Footer from './components/Footer';
 import LegalPage from './components/LegalPage';
 import CookieBanner from './components/CookieBanner';
+import AdPlaceholder from './components/AdPlaceholder';
 
 const AppContent: React.FC<{
   authLoading: boolean;
@@ -61,7 +62,10 @@ const AppContent: React.FC<{
         isGameOver={isStatsEnabled}
       />
 
-      <main className="flex-1 flex flex-col items-center p-4 max-w-4xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center p-4 max-w-4xl mx-auto w-full relative">
+        <AdPlaceholder position="left" />
+        <AdPlaceholder position="right" />
+
         <Routes>
           <Route path="/" element={
             <MetrodleGame
