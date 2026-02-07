@@ -75,6 +75,14 @@ interface Translation {
     rutaStep3Desc: string;
     rutaStep4Title: string;
     rutaStep4Desc: string;
+    privacyPolicy: string;
+    cookiesPolicy: string;
+    copyright: string;
+    privacyContent: string;
+    cookiesContent: string;
+    accept: string;
+    decline: string;
+    cookieBannerText: string;
 }
 
 const translations: Record<Language, Translation> = {
@@ -149,7 +157,15 @@ const translations: Record<Language, Translation> = {
         rutaStep3Title: "Pas a pas",
         rutaStep3Desc: "Has d'anar endevinant quina és la següent estació de la ruta en ordre.",
         rutaStep4Title: "Atenció als errors",
-        rutaStep4Desc: "Si t'equivoques d'estació, sumaràs un error. Completa la ruta amb el mínim d'errors possibles!"
+        rutaStep4Desc: "Si t'equivoques d'estació, sumaràs un error. Completa la ruta amb el mínim d'errors possibles!",
+        privacyPolicy: "Privacitat",
+        cookiesPolicy: "Cookies",
+        copyright: "© 2026 Metrodle BCN. Tots els drets reservats.",
+        privacyContent: "A Metrodle BCN respectem la teva privacitat. Utilitzem Google Analytics per entendre com es fa servir el joc i Google AdSense per mostrar anuncis que ens permeten mantenir el servei gratuït. No venem les teves dades a tercers. En jugar, acceptes la recollida de dades anònimes per a fins estadístics i publicitaris.",
+        cookiesContent: "Utilitzem cookies per personalitzar el contingut, els anuncis i analitzar el trànsit. Les cookies de tercers (com les de Google) s'utilitzen per oferir anuncis basats en les teves visites prèvies a aquesta o altres webs. Pots configurar-les o rebutjar-les des dels ajustos del teu navegador.",
+        accept: "Acceptar",
+        decline: "Rebutjar",
+        cookieBannerText: "Fem servir cookies pròpies i de tercers per millorar la teva experiència i mostrar-te publicitat relacionada amb les teves preferències."
     },
     es: {
         title: "Metrodle BCN",
@@ -222,7 +238,15 @@ const translations: Record<Language, Translation> = {
         rutaStep3Title: "Paso a paso",
         rutaStep3Desc: "Debes ir adivinando cuál es la siguiente estación de la ruta en orden.",
         rutaStep4Title: "Cuidado con los errores",
-        rutaStep4Desc: "Si te equivocas de estación, sumarás un error. ¡Completa la ruta con el mínimo de errores posibles!"
+        rutaStep4Desc: "Si te equivocas de estación, sumarás un error. ¡Completa la ruta con el mínimo de errores posibles!",
+        privacyPolicy: "Privacidad",
+        cookiesPolicy: "Cookies",
+        copyright: "© 2026 Metrodle BCN. Todos los derechos reservados.",
+        privacyContent: "En Metrodle BCN respetamos tu privacidad. Utilizamos Google Analytics para entender cómo se usa el juego y Google AdSense para mostrar anuncios que nos permiten mantener el servicio gratuito. No vendemos tus datos a terceros. Al jugar, aceptas la recogida de datos anónimos para fines estadísticos y publicitarios.",
+        cookiesContent: "Utilizamos cookies para personalizar el contenido, los anuncios y analizar el tráfico. Las cookies de terceros (como las de Google) se utilizan para ofrecer anuncios basados en tus visitas previas a esta u otras webs. Puedes configurarlas o rechazarlas desde los ajustes de tu navegador.",
+        accept: "Aceptar",
+        decline: "Rechazar",
+        cookieBannerText: "Utilizamos cookies propias y de terceros para mejorar tu experiencia y mostrarte publicidad relacionada con tus preferencias."
     },
     en: {
         title: "Metrodle BCN",
@@ -295,7 +319,15 @@ const translations: Record<Language, Translation> = {
         rutaStep3Title: "Step by step",
         rutaStep3Desc: "You must guess the next station in the route in the correct order.",
         rutaStep4Title: "Watch out for errors",
-        rutaStep4Desc: "If you guess the wrong station, you add an error. Complete the route with as few errors as possible!"
+        rutaStep4Desc: "If you guess the wrong station, you add an error. Complete the route with as few errors as possible!",
+        privacyPolicy: "Privacy",
+        cookiesPolicy: "Cookies",
+        copyright: "© 2026 Metrodle BCN. All rights reserved.",
+        privacyContent: "At Metrodle BCN we respect your privacy. We use Google Analytics to understand how the game is used and Google AdSense to show ads that allow us to keep the service free. We do not sell your data to third parties. By playing, you agree to the collection of anonymous data for statistical and advertising purposes.",
+        cookiesContent: "We use cookies to personalize content, ads and analyze traffic. Third-party cookies (such as Google's) are used to serve ads based on your previous visits to this or other websites. You can configure or reject them from your browser settings.",
+        accept: "Accept",
+        decline: "Decline",
+        cookieBannerText: "We use own and third-party cookies to improve your experience and show you advertising related to your preferences."
     }
 };
 

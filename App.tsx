@@ -9,6 +9,9 @@ import SettingsModal from './components/SettingsModal';
 import MetrodleGame from './components/MetrodleGame';
 import RutaGame from './components/RutaGame';
 import PracticeGame from './components/PracticeGame';
+import Footer from './components/Footer';
+import LegalPage from './components/LegalPage';
+import CookieBanner from './components/CookieBanner';
 
 const AppContent: React.FC<{
   authLoading: boolean;
@@ -39,7 +42,6 @@ const AppContent: React.FC<{
   const statsGameType = location.pathname === '/ruta' ? 'ruta' : 'metrodle';
 
   if (authLoading) {
-    // ... (rest of loading same)
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-white">
         <div className="flex flex-col items-center gap-4">
@@ -81,8 +83,12 @@ const AppContent: React.FC<{
               setShowStats={setShowStats}
             />
           } />
+          <Route path="/privacy" element={<LegalPage type="privacy" />} />
+          <Route path="/cookies" element={<LegalPage type="cookies" />} />
         </Routes>
       </main>
+
+      <Footer />
 
       {showHowTo && (
         <HowToPlay
@@ -91,6 +97,7 @@ const AppContent: React.FC<{
         />
       )}
       {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+      <CookieBanner />
     </div>
   );
 };
