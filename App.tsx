@@ -18,14 +18,28 @@ const AppContent: React.FC<{
   setShowStats: (s: boolean) => void;
   showSettings: boolean;
   setShowSettings: (s: boolean) => void;
-  isGameOverLocal: boolean;
-  setIsGameOverLocal: (o: boolean) => void;
-}> = ({ authLoading, showHowTo, setShowHowTo, showStats, setShowStats, showSettings, setShowSettings, isGameOverLocal, setIsGameOverLocal }) => {
+  metrodleOver: boolean;
+  setMetrodleOver: (o: boolean) => void;
+  rutaOver: boolean;
+  setRutaOver: (o: boolean) => void;
+}> = ({ authLoading, showHowTo, setShowHowTo, showStats, setShowStats, showSettings, setShowSettings, metrodleOver, setMetrodleOver, rutaOver, setRutaOver }) => {
   const { t } = useLanguage();
   const location = useLocation();
-  const isStatsEnabled = isGameOverLocal || location.pathname === '/train' || location.pathname === '/ruta';
+
+  // Cerrar modales al cambiar de página
+  useEffect(() => {
+    setShowHowTo(false);
+    setShowStats(false);
+  }, [location.pathname, setShowHowTo, setShowStats]);
+
+  // El botón de estadísticas se habilita solo si el juego de la página actual ha terminado
+  const isStatsEnabled = location.pathname === '/ruta' ? rutaOver : metrodleOver;
+
+  // Determinar qué estadísticas mostrar en el modal
+  const statsGameType = location.pathname === '/ruta' ? 'ruta' : 'metrodle';
 
   if (authLoading) {
+    // ... (rest of loading same)
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-white">
         <div className="flex flex-col items-center gap-4">
@@ -51,14 +65,14 @@ const AppContent: React.FC<{
             <MetrodleGame
               showStats={showStats}
               setShowStats={setShowStats}
-              onGameOver={setIsGameOverLocal}
+              onGameOver={setMetrodleOver}
             />
           } />
           <Route path="/ruta" element={
             <RutaGame
               showStats={showStats}
               setShowStats={setShowStats}
-              onGameOver={setIsGameOverLocal}
+              onGameOver={setRutaOver}
             />
           } />
           <Route path="/train" element={
@@ -70,7 +84,12 @@ const AppContent: React.FC<{
         </Routes>
       </main>
 
-      {showHowTo && <HowToPlay onClose={() => setShowHowTo(false)} />}
+      {showHowTo && (
+        <HowToPlay
+          onClose={() => setShowHowTo(false)}
+          gameType={statsGameType}
+        />
+      )}
       {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
     </div>
   );
@@ -81,7 +100,8 @@ const App: React.FC = () => {
   const [showHowTo, setShowHowTo] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [isGameOverLocal, setIsGameOverLocal] = useState(false);
+  const [metrodleOver, setMetrodleOver] = useState(false);
+  const [rutaOver, setRutaOver] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add('dark');
@@ -97,8 +117,10 @@ const App: React.FC = () => {
         setShowStats={setShowStats}
         showSettings={showSettings}
         setShowSettings={setShowSettings}
-        isGameOverLocal={isGameOverLocal}
-        setIsGameOverLocal={setIsGameOverLocal}
+        metrodleOver={metrodleOver}
+        setMetrodleOver={setMetrodleOver}
+        rutaOver={rutaOver}
+        setRutaOver={setRutaOver}
       />
     </Router>
   );

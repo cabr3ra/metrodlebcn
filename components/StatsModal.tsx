@@ -88,17 +88,21 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
           <h2 className={`text-4xl font-black uppercase tracking-tighter mb-2 ${won ? 'text-emerald-500' : 'text-zinc-500'}`}>
             {won ? t.congrats : t.almost}
           </h2>
-          <p className="text-zinc-500 mb-4">{t.secretStation}</p>
-          <button
-            onClick={openInMaps}
-            className="group relative inline-flex flex-col items-center gap-1 p-4 bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-red-500 transition-all active:scale-95"
-          >
-            <span className="text-2xl font-black text-red-600 group-hover:underline">{target.name}</span>
-            <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-              <span className="material-symbols-outlined text-xs">map</span>
-              {t.viewOnMap}
-            </div>
-          </button>
+          {gameType !== 'ruta' && (
+            <>
+              <p className="text-zinc-500 mb-4">{t.secretStation}</p>
+              <button
+                onClick={openInMaps}
+                className="group relative inline-flex flex-col items-center gap-1 p-4 bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-red-500 transition-all active:scale-95"
+              >
+                <span className="text-2xl font-black text-red-600 group-hover:underline">{target.name}</span>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                  <span className="material-symbols-outlined text-xs">map</span>
+                  {t.viewOnMap}
+                </div>
+              </button>
+            </>
+          )}
         </div>
 
         <div className="p-8 space-y-8">

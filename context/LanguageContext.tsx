@@ -66,6 +66,15 @@ interface Translation {
     isNotNext: string;
     errors: string;
     attempts: string;
+    howToPlayRutaTitle: string;
+    rutaStep1Title: string;
+    rutaStep1Desc: string;
+    rutaStep2Title: string;
+    rutaStep2Desc: string;
+    rutaStep3Title: string;
+    rutaStep3Desc: string;
+    rutaStep4Title: string;
+    rutaStep4Desc: string;
 }
 
 const translations: Record<Language, Translation> = {
@@ -100,7 +109,7 @@ const translations: Record<Language, Translation> = {
         distShort: "Dist.",
         practiceMode: "Mode Pràctica",
         comingSoon: "Pròximament",
-        routeDesc: "Troba el recorregut més curt entre dues estacions. Un nou repte cada dia!",
+        routeDesc: "Troba el recorregut més curt entre dues estacions.",
         practiceDesc: "Entrena les teves habilitats sense límit. Ideal per conèixer cada racó de la xarxa.",
         attributes: "Atributs",
         name: "Nom",
@@ -131,7 +140,16 @@ const translations: Record<Language, Translation> = {
         pathCompleted: "Recorregut completat!",
         isNotNext: "no és la parada correcta",
         errors: "Errors",
-        attempts: "Intents"
+        attempts: "Intents",
+        howToPlayRutaTitle: "Com jugar a Ruta BCN?",
+        rutaStep1Title: "Origen i Destí",
+        rutaStep1Desc: "Cada dia tindràs una estació d'origen i una de destinació diferents.",
+        rutaStep2Title: "Troba el camí",
+        rutaStep2Desc: "L'objectiu és trobar el recorregut més curt entre les dues estacions.",
+        rutaStep3Title: "Pas a pas",
+        rutaStep3Desc: "Has d'anar endevinant quina és la següent estació de la ruta en ordre.",
+        rutaStep4Title: "Atenció als errors",
+        rutaStep4Desc: "Si t'equivoques d'estació, sumaràs un error. Completa la ruta amb el mínim d'errors possibles!"
     },
     es: {
         title: "Metrodle BCN",
@@ -164,7 +182,7 @@ const translations: Record<Language, Translation> = {
         distShort: "Dist.",
         practiceMode: "Modo Práctica",
         comingSoon: "Próximamente",
-        routeDesc: "Encuentra el recorrido más corto entre dos estaciones. ¡Un nuevo reto cada día!",
+        routeDesc: "Encuentra el recorrido más corto entre dos estaciones.",
         practiceDesc: "Entrena tus habilidades sin límites. Ideal para conocer cada rincón de la red.",
         attributes: "Atributos",
         name: "Nombre",
@@ -195,7 +213,16 @@ const translations: Record<Language, Translation> = {
         pathCompleted: "¡Recorrido completado!",
         isNotNext: "no es la parada correcta",
         errors: "Errores",
-        attempts: "Intentos"
+        attempts: "Intentos",
+        howToPlayRutaTitle: "¿Cómo jugar a Ruta BCN?",
+        rutaStep1Title: "Origen y Destino",
+        rutaStep1Desc: "Cada día tendrás una estación de origen y una de destino diferentes.",
+        rutaStep2Title: "Encuentra el camino",
+        rutaStep2Desc: "El objetivo es encontrar el recorrido más corto entre ambas estaciones.",
+        rutaStep3Title: "Paso a paso",
+        rutaStep3Desc: "Debes ir adivinando cuál es la siguiente estación de la ruta en orden.",
+        rutaStep4Title: "Cuidado con los errores",
+        rutaStep4Desc: "Si te equivocas de estación, sumarás un error. ¡Completa la ruta con el mínimo de errores posibles!"
     },
     en: {
         title: "Metrodle BCN",
@@ -228,7 +255,7 @@ const translations: Record<Language, Translation> = {
         distShort: "Dist.",
         practiceMode: "Practice Mode",
         comingSoon: "Coming Soon",
-        routeDesc: "Find the shortest route between two stations. A new challenge every day!",
+        routeDesc: "Find the shortest route between two stations.",
         practiceDesc: "Train your skills with no limits. Ideal to learn every corner of the network.",
         attributes: "Attributes",
         name: "Name",
@@ -259,7 +286,16 @@ const translations: Record<Language, Translation> = {
         pathCompleted: "Path completed!",
         isNotNext: "is not the correct stop",
         errors: "Errors",
-        attempts: "Attempts"
+        attempts: "Attempts",
+        howToPlayRutaTitle: "How to play Ruta BCN?",
+        rutaStep1Title: "Origin and Destination",
+        rutaStep1Desc: "Every day you will have a different origin and destination station.",
+        rutaStep2Title: "Find the path",
+        rutaStep2Desc: "The goal is to find the shortest route between the two stations.",
+        rutaStep3Title: "Step by step",
+        rutaStep3Desc: "You must guess the next station in the route in the correct order.",
+        rutaStep4Title: "Watch out for errors",
+        rutaStep4Desc: "If you guess the wrong station, you add an error. Complete the route with as few errors as possible!"
     }
 };
 

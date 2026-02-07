@@ -1,6 +1,7 @@
 
 -- CLEANUP: Drop tables if they exist to start fresh and avoid conflicts
 DROP TABLE IF EXISTS public.daily_schedule CASCADE;
+DROP TABLE IF EXISTS public.daily_route_schedule CASCADE;
 DROP TABLE IF EXISTS public.game_sessions CASCADE;
 DROP TABLE IF EXISTS public.user_stats CASCADE;
 DROP TABLE IF EXISTS public.station_connections CASCADE;
@@ -68,15 +69,17 @@ ALTER TABLE public.station_connections ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access on station_connections" ON public.station_connections FOR SELECT USING (true);
 
 
--- 6. User Stats (Per user)
+-- 6. User Stats (Per user and game)
 CREATE TABLE IF NOT EXISTS public.user_stats (
-    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    game_id TEXT NOT NULL, -- 'metrodle' o 'ruta'
     games_played INTEGER DEFAULT 0,
     wins INTEGER DEFAULT 0,
     current_streak INTEGER DEFAULT 0,
     max_streak INTEGER DEFAULT 0,
     last_played_date DATE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    PRIMARY KEY (user_id, game_id)
 );
 
 ALTER TABLE public.user_stats ENABLE ROW LEVEL SECURITY;
@@ -89,15 +92,17 @@ CREATE POLICY "Users can insert own stats" ON public.user_stats FOR INSERT WITH 
 CREATE TABLE IF NOT EXISTS public.game_sessions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    game_id TEXT NOT NULL, -- 'metrodle' o 'ruta'
     date DATE NOT NULL,
-    station_id TEXT REFERENCES public.stations(id), -- The target station for that day
-    guesses JSONB DEFAULT '[]'::jsonb, -- Array of station IDs guessed so far
+    station_id TEXT REFERENCES public.stations(id), -- Para Metrodle
+    guesses JSONB DEFAULT '[]'::jsonb, -- Estaciones intentadas
     won BOOLEAN DEFAULT FALSE,
-    completed BOOLEAN DEFAULT FALSE, -- True if user won or gave up/exhausted attempts
+    completed BOOLEAN DEFAULT FALSE,
+    errors INTEGER DEFAULT 0, -- Para el juego de Ruta
     duration_seconds INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-    UNIQUE(user_id, date)
+    UNIQUE(user_id, date, game_id)
 );
 
 ALTER TABLE public.game_sessions ENABLE ROW LEVEL SECURITY;
@@ -106,8 +111,7 @@ CREATE POLICY "Users can insert own sessions" ON public.game_sessions FOR INSERT
 CREATE POLICY "Users can update own sessions" ON public.game_sessions FOR UPDATE USING (auth.uid() = user_id);
 
 
--- 8. Daily Schedule (Deterministic random order)
--- We'll use a table to store the shuffled order of stations for the year(s).
+-- 8. Daily Schedule (Metrodle)
 CREATE TABLE IF NOT EXISTS public.daily_schedule (
     date DATE PRIMARY KEY,
     station_id TEXT REFERENCES public.stations(id) NOT NULL
@@ -115,6 +119,17 @@ CREATE TABLE IF NOT EXISTS public.daily_schedule (
 
 ALTER TABLE public.daily_schedule ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access on daily_schedule" ON public.daily_schedule FOR SELECT USING (true);
+
+
+-- 8b. Daily Route Schedule (Ruta) - NUEVA TABLA
+CREATE TABLE IF NOT EXISTS public.daily_route_schedule (
+    date DATE PRIMARY KEY,
+    origin_id TEXT REFERENCES public.stations(id) NOT NULL,
+    destination_id TEXT REFERENCES public.stations(id) NOT NULL
+);
+
+ALTER TABLE public.daily_route_schedule ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access on daily_route_schedule" ON public.daily_route_schedule FOR SELECT USING (true);
 
 
 -- SEED DATA
@@ -560,7 +575,9 @@ INSERT INTO public.stations (id, name, type, positions, line_orders) VALUES ('15
 INSERT INTO public.station_lines (station_id, line_id) VALUES ('158', 'L12') ON CONFLICT (station_id, line_id) DO NOTHING;
 
 
--- 9. RPC Function to get today's station ID based on BCN time
+-- 9. RPC Functions
+
+-- Para Metrodle
 CREATE OR REPLACE FUNCTION public.get_daily_station_id()
 RETURNS TABLE (
   date DATE,
@@ -576,36 +593,80 @@ BEGIN
 END;
 $$;
 
+-- Para Ruta (NUEVA FUNCIÓN)
+CREATE OR REPLACE FUNCTION public.get_daily_route()
+RETURNS TABLE (
+  date DATE,
+  origin_id TEXT,
+  destination_id TEXT
+) LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    dr.date,
+    dr.origin_id,
+    dr.destination_id
+  FROM public.daily_route_schedule dr
+  WHERE dr.date = (CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Madrid')::date;
+END;
+$$;
+
+-- 10. GENERACIÓN AUTOMÁTICA DE CALENDARIOS
+
 DO $$
 DECLARE
     start_date DATE := '2026-01-01';
     end_date DATE := '2030-12-31';
     current_iter_date DATE;
     station_ids TEXT[];
-    shuffled_ids TEXT[];
     s_id TEXT;
-    i INT;
-    days_count INT;
+    
+    -- Para rutas
+    s1_id TEXT;
+    s2_id TEXT;
+    s1_lines TEXT[];
+    s2_lines TEXT[];
+    valid_route BOOLEAN;
 BEGIN
-    -- Check if we have data already
+    -- A. Generar calendario de Metrodle (Estación única)
     IF NOT EXISTS (SELECT 1 FROM public.daily_schedule WHERE date = start_date) THEN
         SELECT array_agg(id) INTO station_ids FROM public.stations;
-
-        -- We need to fill until end_date
         current_iter_date := start_date;
         
         WHILE current_iter_date <= end_date LOOP
-             -- Shuffle stations
-             SELECT array_agg(x) INTO shuffled_ids FROM (SELECT unnest(station_ids) x ORDER BY random()) t;
-             
-             FOREACH s_id IN ARRAY shuffled_ids LOOP
-                 IF current_iter_date > end_date THEN
-                     EXIT;
-                 END IF;
-                 
+             FOR s_id IN (SELECT id FROM public.stations ORDER BY random()) LOOP
+                 IF current_iter_date > end_date THEN EXIT; END IF;
                  INSERT INTO public.daily_schedule (date, station_id) VALUES (current_iter_date, s_id) ON CONFLICT DO NOTHING;
                  current_iter_date := current_iter_date + 1;
              END LOOP;
+        END LOOP;
+    END IF;
+
+    -- B. Generar calendario de Ruta (Origen/Destino con transbordo)
+    IF NOT EXISTS (SELECT 1 FROM public.daily_route_schedule WHERE date = start_date) THEN
+        current_iter_date := start_date;
+        
+        WHILE current_iter_date <= end_date LOOP
+            valid_route := FALSE;
+            
+            -- Intentar encontrar una ruta válida (mínimo 1 transbordo)
+            WHILE NOT valid_route LOOP
+                SELECT id INTO s1_id FROM public.stations ORDER BY random() LIMIT 1;
+                SELECT id INTO s2_id FROM public.stations WHERE id <> s1_id ORDER BY random() LIMIT 1;
+                
+                -- Verificar que no compartan ninguna línea
+                SELECT array_agg(line_id) INTO s1_lines FROM public.station_lines WHERE station_id = s1_id;
+                SELECT array_agg(line_id) INTO s2_lines FROM public.station_lines WHERE station_id = s2_id;
+                
+                IF NOT (s1_lines && s2_lines) THEN
+                    valid_route := TRUE;
+                END IF;
+            END LOOP;
+
+            INSERT INTO public.daily_route_schedule (date, origin_id, destination_id) 
+            VALUES (current_iter_date, s1_id, s2_id) ON CONFLICT DO NOTHING;
+            
+            current_iter_date := current_iter_date + 1;
         END LOOP;
     END IF;
 END $$;
