@@ -21,7 +21,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
         </div>
 
         <div className="p-6 space-y-8">
-          {/* Idioma */}
           <div className="space-y-3">
             <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{t.language}</label>
             <div className="flex bg-zinc-800 p-1 rounded-xl gap-1">
