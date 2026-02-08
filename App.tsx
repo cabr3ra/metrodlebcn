@@ -93,6 +93,7 @@ const AppContent: React.FC<{
       </main>
 
       <Footer />
+      <AdPlaceholder position="bottom" />
 
       {showHowTo && (
         <HowToPlay
