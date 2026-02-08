@@ -5,8 +5,6 @@ interface AdPlaceholderProps {
     position: 'left' | 'right' | 'bottom';
 }
 
-// LLAVE MAESTRA PARA ANUNCIOS: 
-// true = Se muestran | false = Desaparecen por completo
 const ADS_ENABLED = false;
 
 const AdPlaceholder: React.FC<AdPlaceholderProps> = ({ position }) => {
