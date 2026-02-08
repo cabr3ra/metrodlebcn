@@ -5,7 +5,13 @@ interface AdPlaceholderProps {
     position: 'left' | 'right' | 'bottom';
 }
 
+// LLAVE MAESTRA PARA ANUNCIOS: 
+// true = Se muestran | false = Desaparecen por completo
+const ADS_ENABLED = false;
+
 const AdPlaceholder: React.FC<AdPlaceholderProps> = ({ position }) => {
+    if (!ADS_ENABLED) return null;
+
     if (position === 'bottom') {
         return (
             <div className="w-full max-w-4xl mx-auto px-4 py-8 min-[1300px]:hidden">
