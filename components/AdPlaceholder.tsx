@@ -5,10 +5,10 @@ interface AdPlaceholderProps {
     position: 'left' | 'right' | 'bottom';
 }
 
-const ADS_ENABLED = false;
+const adsEnabled = false;
 
 const AdPlaceholder: React.FC<AdPlaceholderProps> = ({ position }) => {
-    if (!ADS_ENABLED) return null;
+    if (!adsEnabled) return null;
 
     if (position === 'bottom') {
         return (
