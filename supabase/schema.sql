@@ -611,7 +611,14 @@ BEGIN
 END;
 $$;
 
--- 10. GENERACIÓN AUTOMÁTICA DE CALENDARIOS
+
+-- ====================================================================================
+-- SECCIÓN DE GENERACIÓN DE CALENDARIO
+-- ====================================================================================
+-- NOTA: Si solo quieres CAMBIAR las estaciones y rutas diarias SIN borrar a los usuarios
+-- ni resetear el juego, ejecuta UNICAMENTE el bloque de código que viene a continuación
+-- (desde el "DO $$" hasta el "END $$;").
+-- ====================================================================================
 
 DO $$
 DECLARE
