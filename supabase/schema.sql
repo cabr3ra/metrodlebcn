@@ -615,8 +615,8 @@ $$;
 
 DO $$
 DECLARE
-    start_date DATE := '2026-01-01';
-    end_date DATE := '2030-12-31';
+    start_date DATE := '2026-02-22';
+    end_date DATE := '2026-12-30';
     current_iter_date DATE;
     station_ids TEXT[];
     s_id TEXT;
@@ -629,7 +629,7 @@ DECLARE
     valid_route BOOLEAN;
 BEGIN
     -- A. Generar calendario de Metrodle (Estación única)
-    IF NOT EXISTS (SELECT 1 FROM public.daily_schedule WHERE date = start_date) THEN
+    BEGIN
         SELECT array_agg(id) INTO station_ids FROM public.stations;
         current_iter_date := start_date;
         
@@ -640,10 +640,10 @@ BEGIN
                  current_iter_date := current_iter_date + 1;
              END LOOP;
         END LOOP;
-    END IF;
+    END;
 
     -- B. Generar calendario de Ruta (Origen/Destino con transbordo)
-    IF NOT EXISTS (SELECT 1 FROM public.daily_route_schedule WHERE date = start_date) THEN
+    BEGIN
         current_iter_date := start_date;
         
         WHILE current_iter_date <= end_date LOOP
@@ -668,5 +668,5 @@ BEGIN
             
             current_iter_date := current_iter_date + 1;
         END LOOP;
-    END IF;
+    END;
 END $$;

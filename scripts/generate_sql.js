@@ -5,24 +5,22 @@ const path = require('path');
 const constantsPath = path.join(__dirname, '..', 'constants.ts');
 const constantsContent = fs.readFileSync(constantsPath, 'utf8');
 
-const stationsMatch = constantsContent.match(/export const STATIONS: Station\[] = (\[[\s\S]*?\]);/);
-const lineStylesMatch = constantsContent.match(/export const LINE_STYLES: Record<string, LineStyle> = ({[\s\S]*?});/);
 
-if (!stationsMatch || !lineStylesMatch) {
-    console.error('Could not parse constants.ts');
-    process.exit(1);
+
+function extractObject(content, variableName) {
+    // Remove imports and types that might break eval
+    const cleanContent = content.replace(/import\s+[\s\S]*?;/g, '');
+    const regex = new RegExp(`export const ${variableName}(?:: [^=]+)? = ([\\s\\S]*?);\\r?\\n`, 'm');
+    const match = cleanContent.match(regex);
+    if (!match) throw new Error(`Could not find ${variableName} in constants.ts`);
+
+    // Add dummy types for eval context
+    const Station = {};
+    return eval(`(${match[1]})`);
 }
 
-function parseAsJson(str) {
-    return JSON.parse(str
-        .replace(/(\w+):/g, '"$1":')
-        .replace(/'/g, '"')
-        .replace(/,\s*([}\]])/g, '$1')
-    );
-}
-
-const STATIONS = parseAsJson(stationsMatch[1]);
-const LINE_STYLES = parseAsJson(lineStylesMatch[1]);
+const STATIONS = extractObject(constantsContent, 'STATIONS');
+const LINE_STYLES = extractObject(constantsContent, 'LINE_STYLES');
 
 let sql = `
 -- 1. Lines Table
@@ -108,6 +106,108 @@ STATIONS.forEach(s => {
     });
 });
 
+
+// 6. RPC Functions
+sql += `
+-- Para Metrodle
+CREATE OR REPLACE FUNCTION public.get_daily_station_id()
+RETURNS TABLE (
+  date DATE,
+  station_id TEXT
+) LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    ds.date,
+    ds.station_id
+  FROM public.daily_schedule ds
+  WHERE ds.date = (CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Madrid')::date;
+END;
+$$;
+
+-- Para Ruta
+CREATE OR REPLACE FUNCTION public.get_daily_route()
+RETURNS TABLE (
+  date DATE,
+  origin_id TEXT,
+  destination_id TEXT
+) LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    dr.date,
+    dr.origin_id,
+    dr.destination_id
+  FROM public.daily_route_schedule dr
+  WHERE dr.date = (CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Madrid')::date;
+END;
+$$;
+`;
+
+// 7. CALENDAR GENERATION
+sql += `
+-- 8. Daily Schedule Tables
+CREATE TABLE IF NOT EXISTS public.daily_schedule (
+    date DATE PRIMARY KEY,
+    station_id TEXT REFERENCES public.stations(id) NOT NULL
+);
+ALTER TABLE public.daily_schedule ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read access on daily_schedule') THEN
+    CREATE POLICY "Allow public read access on daily_schedule" ON public.daily_schedule FOR SELECT USING (true);
+END IF; END $$;
+
+CREATE TABLE IF NOT EXISTS public.daily_route_schedule (
+    date DATE PRIMARY KEY,
+    origin_id TEXT REFERENCES public.stations(id) NOT NULL,
+    destination_id TEXT REFERENCES public.stations(id) NOT NULL
+);
+ALTER TABLE public.daily_route_schedule ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read access on daily_route_schedule') THEN
+    CREATE POLICY "Allow public read access on daily_route_schedule" ON public.daily_route_schedule FOR SELECT USING (true);
+END IF; END $$;
+
+-- 9. Automatically Generate Calendars (Today to End of Year)
+DO $$
+DECLARE
+    start_date DATE := '2026-02-22'; -- Start from today
+    end_date DATE := '2026-12-30';   -- End of year
+    current_iter_date DATE;
+    s_id TEXT;
+    s1_id TEXT; s2_id TEXT;
+    s1_lines TEXT[]; s2_lines TEXT[];
+    valid_route BOOLEAN;
+BEGIN
+    -- Clear current schedules in range
+    DELETE FROM public.daily_schedule WHERE date >= start_date AND date <= end_date;
+    DELETE FROM public.daily_route_schedule WHERE date >= start_date AND date <= end_date;
+
+    -- Generate Metrodle Schedule
+    current_iter_date := start_date;
+    WHILE current_iter_date <= end_date LOOP
+         FOR s_id IN (SELECT id FROM public.stations ORDER BY random()) LOOP
+             IF current_iter_date > end_date THEN EXIT; END IF;
+             INSERT INTO public.daily_schedule (date, station_id) VALUES (current_iter_date, s_id) ON CONFLICT (date) DO UPDATE SET station_id = EXCLUDED.station_id;
+             current_iter_date := current_iter_date + 1;
+         END LOOP;
+    END LOOP;
+
+    -- Generate Route Schedule
+    current_iter_date := start_date;
+    WHILE current_iter_date <= end_date LOOP
+        valid_route := FALSE;
+        WHILE NOT valid_route LOOP
+            SELECT id INTO s1_id FROM public.stations ORDER BY random() LIMIT 1;
+            SELECT id INTO s2_id FROM public.stations WHERE id <> s1_id ORDER BY random() LIMIT 1;
+            SELECT array_agg(line_id) INTO s1_lines FROM public.station_lines WHERE station_id = s1_id;
+            SELECT array_agg(line_id) INTO s2_lines FROM public.station_lines WHERE station_id = s2_id;
+            IF NOT (s1_lines && s2_lines) THEN valid_route := TRUE; END IF;
+        END LOOP;
+        INSERT INTO public.daily_route_schedule (date, origin_id, destination_id) VALUES (current_iter_date, s1_id, s2_id) ON CONFLICT (date) DO UPDATE SET origin_id = EXCLUDED.origin_id, destination_id = EXCLUDED.destination_id;
+        current_iter_date := current_iter_date + 1;
+    END LOOP;
+END $$;
+`;
+
 const outputPath = path.join(__dirname, '..', 'supabase', 'schema.sql');
 fs.writeFileSync(outputPath, sql, 'utf8');
-console.log('Schema SYNCED from constants.ts to schema.sql');
+console.log('Schema SYNCED from constants.ts to schema.sql with updated generation dates.');
