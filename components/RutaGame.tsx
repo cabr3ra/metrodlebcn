@@ -29,6 +29,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
         correctStationIds,
         setCorrectStationIds,
         persistProgress,
+        persistShare,
         isCompleted,
         errors,
         setErrors,
@@ -115,8 +116,8 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
             setLastError(station.name);
             setSearchTerm('');
 
-            // Persist the error immediately so it's not lost if the user refreshes
-            persistProgress(correctStationIds, false, nextErrors);
+            // Persist the error station ID for analytics (Heatmap)
+            persistProgress(correctStationIds, false, station.id);
         }
     };
 
@@ -294,6 +295,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
             )}
 
 
+
             {showStats && <StatsModal
                 onClose={() => setShowStats(false)}
                 guesses={[]} // Grid format not applicable here
@@ -306,6 +308,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                 dayNumber={dailyRoute.dayNumber}
                 date={dailyRoute.date}
                 stats={stats}
+                onShare={persistShare}
                 gameType="ruta"
             />}
 

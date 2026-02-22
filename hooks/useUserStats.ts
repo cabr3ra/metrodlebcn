@@ -9,7 +9,8 @@ export interface UserStats extends GameStats {
     userId?: string;
 }
 
-export function useUserStats(gameId: string = 'metrodle') {
+
+export function useUserStats(modeId: string = 'metrodle') {
     const { user } = useAuth();
     const [stats, setStats] = useState<UserStats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ export function useUserStats(gameId: string = 'metrodle') {
                 .from('user_stats')
                 .select('*')
                 .eq('user_id', user.id)
-                .eq('game_id', gameId)
+                .eq('mode_id', modeId)
                 .maybeSingle();
 
             if (error) throw error;
@@ -78,9 +79,10 @@ export function useUserStats(gameId: string = 'metrodle') {
         const newBest = Math.max(current.bestStreak, newStreak);
 
         // We need to upsert into DB
+
         const payload = {
             user_id: user.id,
-            game_id: gameId,
+            mode_id: modeId,
             games_played: newPlayed,
             wins: newWins,
             current_streak: newStreak,

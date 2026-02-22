@@ -69,17 +69,18 @@ ALTER TABLE public.station_connections ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access on station_connections" ON public.station_connections FOR SELECT USING (true);
 
 
--- 6. User Stats (Per user and game)
+
+-- 6. User Stats (Per user and mode)
 CREATE TABLE IF NOT EXISTS public.user_stats (
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    game_id TEXT NOT NULL, -- 'metrodle' o 'ruta'
+    mode_id TEXT NOT NULL, -- 'metrodle' o 'ruta'
     games_played INTEGER DEFAULT 0,
     wins INTEGER DEFAULT 0,
     current_streak INTEGER DEFAULT 0,
     max_streak INTEGER DEFAULT 0,
     last_played_date DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-    PRIMARY KEY (user_id, game_id)
+    PRIMARY KEY (user_id, mode_id)
 );
 
 ALTER TABLE public.user_stats ENABLE ROW LEVEL SECURITY;
@@ -92,17 +93,19 @@ CREATE POLICY "Users can insert own stats" ON public.user_stats FOR INSERT WITH 
 CREATE TABLE IF NOT EXISTS public.game_sessions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    game_id TEXT NOT NULL, -- 'metrodle' o 'ruta'
+    mode_id TEXT NOT NULL, -- 'metrodle' o 'ruta'
     date DATE NOT NULL,
-    station_id TEXT REFERENCES public.stations(id), -- Para Metrodle
-    guesses JSONB DEFAULT '[]'::jsonb, -- Estaciones intentadas
+    target_station_id TEXT REFERENCES public.stations(id), -- Para Metrodle
+    attempts JSONB DEFAULT '[]'::jsonb, -- Estaciones intentadas / Camino correcto en ruta
     won BOOLEAN DEFAULT FALSE,
     completed BOOLEAN DEFAULT FALSE,
-    errors INTEGER DEFAULT 0, -- Para el juego de Ruta
+    errors INTEGER DEFAULT 0, -- Cantidad de errores
+    error_log JSONB DEFAULT '[]'::jsonb, -- IDs de estaciones donde falló el usuario (Mapa de calor)
+    shares_count INTEGER DEFAULT 0, -- Cuántas veces ha compartido el resultado
     duration_seconds INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-    UNIQUE(user_id, date, game_id)
+    UNIQUE(user_id, date, mode_id)
 );
 
 ALTER TABLE public.game_sessions ENABLE ROW LEVEL SECURITY;

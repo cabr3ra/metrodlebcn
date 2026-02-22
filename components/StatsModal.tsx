@@ -18,11 +18,13 @@ interface StatsModalProps {
   stats: UserStats | null;
   gameType?: 'metrodle' | 'ruta'; // Changed from gameId
   origin?: Station;
+
   errorCount?: number;
   currentAttempts?: number;
+  onShare?: () => void;
 }
 
-const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, solveTime, dayNumber, date, stats, gameType = 'metrodle', origin, errorCount = 0, currentAttempts }) => {
+const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, solveTime, dayNumber, date, stats, gameType = 'metrodle', origin, errorCount = 0, currentAttempts, onShare }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
@@ -65,9 +67,11 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
     return `Metrodle BCN ${formattedDate} 🚇\n${attempts}/6 ${timeStr}\n\n${grid}\n\n📲 metrodlebcn.app\n#MetrodleBCN #Barcelona #Metro`;
   };
 
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(getShareText());
     alert(t.copied);
+    onShare?.();
   };
 
   // ... shareOnX and openInMaps kept same
@@ -75,6 +79,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
   const shareOnX = () => {
     const text = encodeURIComponent(getShareText());
     window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    onShare?.();
   };
 
   const openInMaps = () => {

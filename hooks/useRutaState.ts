@@ -5,13 +5,16 @@ import { useAuth } from '../context/AuthContext';
 import { Station } from '../types';
 import { STATIONS } from '../constants';
 
+
 export function useRutaState(date: string, origin: Station | null, destination: Station | null) {
     const { user } = useAuth();
     const [correctStationIds, setCorrectStationIds] = useState<string[]>([]);
+    const [errorLog, setErrorLog] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [dbSessionId, setDbSessionId] = useState<string | null>(null);
     const [isCompleted, setIsCompleted] = useState(false);
     const [errors, setErrors] = useState(0);
+    const [sharesCount, setSharesCount] = useState(0);
     const [startTime, setStartTime] = useState<number | null>(null);
 
     useEffect(() => {
@@ -27,25 +30,29 @@ export function useRutaState(date: string, origin: Station | null, destination: 
                     .select('*')
                     .eq('user_id', user!.id)
                     .eq('date', date)
-                    .eq('game_id', 'ruta')
+                    .eq('mode_id', 'ruta')
                     .maybeSingle();
 
                 if (mounted && data) {
                     setDbSessionId(data.id);
                     setIsCompleted(data.completed);
-                    if (data.guesses && Array.isArray(data.guesses)) {
-                        setCorrectStationIds(data.guesses);
+                    if (data.attempts && Array.isArray(data.attempts)) {
+                        setCorrectStationIds(data.attempts);
                     }
+                    if (data.error_log && Array.isArray(data.error_log)) {
+                        setErrorLog(data.error_log);
+                    }
+                    setSharesCount(data.shares_count || 0);
                     setStartTime(new Date(data.created_at).getTime());
                     if (data.errors !== undefined) {
                         setErrors(data.errors);
                     }
-                    // For Ruta, we might store errors in a separate column or just count them from a meta field.
-                    // For now, let's just use local state for errors during the session.
                 } else if (mounted) {
-                    setCorrectStationIds([origin.id]); // Start with origin
+                    setCorrectStationIds([origin.id]);
+                    setErrorLog([]);
                     setDbSessionId(null);
                     setIsCompleted(false);
+                    setSharesCount(0);
                 }
             } catch (e) {
                 console.error(e);
@@ -58,17 +65,21 @@ export function useRutaState(date: string, origin: Station | null, destination: 
         return () => { mounted = false; };
     }, [user, date, origin, destination]);
 
-    const persistProgress = async (newIds: string[], completed: boolean, errorOverride?: number) => {
+    const persistProgress = async (newIds: string[], completed: boolean, failedStationId?: string) => {
         if (!user) return;
+
+        const newErrorLog = failedStationId ? [...errorLog, failedStationId] : errorLog;
+        if (failedStationId) setErrorLog(newErrorLog);
 
         const payload = {
             user_id: user.id,
             date,
-            game_id: 'ruta',
-            guesses: newIds,
+            mode_id: 'ruta',
+            attempts: newIds,
             won: completed,
             completed: completed,
-            errors: errorOverride !== undefined ? errorOverride : errors,
+            errors: newErrorLog.length,
+            error_log: newErrorLog,
             updated_at: new Date().toISOString()
         };
 
@@ -80,11 +91,19 @@ export function useRutaState(date: string, origin: Station | null, destination: 
         }
     };
 
+    const persistShare = async () => {
+        if (!user || !dbSessionId) return;
+        const newCount = sharesCount + 1;
+        setSharesCount(newCount);
+        await supabase.from('game_sessions').update({ shares_count: newCount }).eq('id', dbSessionId);
+    };
+
     return {
         loading,
         correctStationIds,
         setCorrectStationIds,
         persistProgress,
+        persistShare,
         isCompleted,
         errors,
         setErrors,

@@ -38,6 +38,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
     const {
         guesses: remoteGuesses,
         persistGuess,
+        persistShare,
         isCompleted,
         startTime: sessionStartTime,
         solveTime: remoteSolveTime
@@ -166,6 +167,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
             )}
 
 
+
             {showStats && <StatsModal
                 onClose={() => setShowStats(false)}
                 guesses={guesses}
@@ -176,6 +178,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 date={dailyDate}
                 currentAttempts={guesses.length}
                 stats={stats}
+                onShare={persistShare}
             />}
         </div>
     );

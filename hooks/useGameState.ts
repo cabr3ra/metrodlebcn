@@ -10,7 +10,8 @@ import { calculateResult } from '../utils/gameLogic';
 // Ideally this logic should be a shared utility.
 // For now, we assume we just need to reconstruct the objects.
 
-export function useGameState(date: string, targetStation: Station | null, gameId: string = 'metrodle') {
+
+export function useGameState(date: string, targetStation: Station | null, modeId: string = 'metrodle') {
     const { user } = useAuth();
     const [guesses, setGuesses] = useState<GuessResult[]>([]);
     const [loading, setLoading] = useState(true);
@@ -18,6 +19,7 @@ export function useGameState(date: string, targetStation: Station | null, gameId
     const [isCompleted, setIsCompleted] = useState(false);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [solveTimeState, setSolveTimeState] = useState<number | null>(null);
+    const [sharesCount, setSharesCount] = useState(0);
 
     useEffect(() => {
         if (!user || !date || !targetStation) return;
@@ -32,7 +34,7 @@ export function useGameState(date: string, targetStation: Station | null, gameId
                     .select('*')
                     .eq('user_id', user!.id)
                     .eq('date', date)
-                    .eq('game_id', gameId)
+                    .eq('mode_id', modeId)
                     .maybeSingle();
 
                 if (error) console.error('Error loading game session:', error);
@@ -41,12 +43,12 @@ export function useGameState(date: string, targetStation: Station | null, gameId
                     setDbSessionId(data.id);
                     setIsCompleted(data.completed);
                     setStartTime(new Date(data.created_at).getTime());
+                    setSharesCount(data.shares_count || 0);
                     if (data.duration_seconds) setSolveTimeState(data.duration_seconds);
 
-                    // Hydrate guesses
-                    if (data.guesses && Array.isArray(data.guesses)) {
-                        // Map IDs back to Station objects and calculate results
-                        const hydratedGuesses = data.guesses.map((id: string) => {
+                    // Hydrate attempts (guesses)
+                    if (data.attempts && Array.isArray(data.attempts)) {
+                        const hydratedGuesses = data.attempts.map((id: string) => {
                             const station = STATIONS.find(s => s.id === id);
                             if (!station) return null;
                             return calculateResult(station, targetStation);
@@ -55,10 +57,10 @@ export function useGameState(date: string, targetStation: Station | null, gameId
                         setGuesses(hydratedGuesses);
                     }
                 } else if (mounted) {
-                    // No session exists, reset state
                     setGuesses([]);
                     setDbSessionId(null);
                     setIsCompleted(false);
+                    setSharesCount(0);
                 }
             } catch (e) {
                 console.error(e);
@@ -72,17 +74,17 @@ export function useGameState(date: string, targetStation: Station | null, gameId
         return () => { mounted = false; };
     }, [user, date, targetStation]);
 
-    const persistGuess = async (newGuessIds: string[], won: boolean, duration?: number) => {
+    const persistGuess = async (newAttemptIds: string[], won: boolean, duration?: number) => {
         if (!user) return;
 
         const payload = {
             user_id: user.id,
             date,
-            station_id: targetStation?.id,
-            game_id: gameId,
-            guesses: newGuessIds,
+            target_station_id: targetStation?.id,
+            mode_id: modeId,
+            attempts: newAttemptIds,
             won,
-            completed: won || newGuessIds.length >= 6,
+            completed: won || (modeId === 'metrodle' && newAttemptIds.length >= 6),
             duration_seconds: duration !== undefined ? duration : solveTimeState,
             updated_at: new Date().toISOString()
         };
@@ -95,10 +97,18 @@ export function useGameState(date: string, targetStation: Station | null, gameId
         }
     };
 
+    const persistShare = async () => {
+        if (!user || !dbSessionId) return;
+        const newCount = sharesCount + 1;
+        setSharesCount(newCount);
+        await supabase.from('game_sessions').update({ shares_count: newCount }).eq('id', dbSessionId);
+    };
+
     return {
         loading,
-        guesses, // <--- Added this
+        guesses,
         persistGuess,
+        persistShare,
         dbSessionId,
         isCompleted,
         startTime,
