@@ -3,14 +3,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
+
 const social_links = false;
+const dashboard_visible = false;
 
 const Footer: React.FC = () => {
     const { t } = useLanguage();
 
     return (
         <footer className="w-full py-6 px-4 bg-zinc-950 border-t border-zinc-900 mt-auto">
-            <div className="max-w-4xl mx-auto flex flex-col items-center gap-4">
+            <div className="max-w-5xl mx-auto flex flex-col items-center gap-4">
                 {social_links && (
                     <div className="flex items-center gap-6 mb-2">
                         <a
@@ -65,20 +67,25 @@ const Footer: React.FC = () => {
                     </Link>
                     <div className="w-1 h-1 bg-zinc-800 rounded-full"></div>
 
+
                     <a
                         href="mailto:hola@metrodlebcn.app"
                         className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-red-500 transition-colors"
                     >
                         {t.contact}
                     </a>
-                    <div className="w-1 h-1 bg-zinc-800 rounded-full"></div>
-                    <Link
-                        to="/dashboard"
-                        className="text-zinc-700 hover:text-zinc-500 transition-colors flex items-center"
-                        title="Dashboard"
-                    >
-                        <span className="material-symbols-outlined text-sm">monitoring</span>
-                    </Link>
+                    {dashboard_visible && (
+                        <>
+                            <div className="w-1 h-1 bg-zinc-800 rounded-full"></div>
+                            <Link
+                                to="/dashboard"
+                                className="text-zinc-700 hover:text-zinc-500 transition-colors flex items-center"
+                                title="Dashboard"
+                            >
+                                <span className="material-symbols-outlined text-sm">monitoring</span>
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 <p className="text-[9px] font-bold text-zinc-700 uppercase tracking-[0.15em] text-center opacity-60">

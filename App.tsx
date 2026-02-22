@@ -65,7 +65,7 @@ const AppContent: React.FC<{
         isGameOver={isStatsEnabled}
       />
 
-      <main className="flex-1 flex flex-col items-center p-4 max-w-4xl mx-auto w-full relative">
+      <main className="flex-1 flex flex-col items-center p-4 max-w-5xl mx-auto w-full relative">
         <AdPlaceholder position="left" />
         <AdPlaceholder position="right" />
 

@@ -15,7 +15,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenHowTo, onOpenStats, onOpenSetting
   const navigate = useNavigate();
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-40">
-      <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="logo-container">
           <div className="w-8 h-8 flex-shrink-0 cursor-pointer" onClick={() => navigate('/')}>
             <img src="/logo.svg" alt="Metrodle BCN Logo" className="w-full h-full object-contain" />

@@ -5,14 +5,14 @@ interface AdPlaceholderProps {
     position: 'left' | 'right' | 'bottom';
 }
 
-const adsEnabled = false;
+const ads_enabled = false;
 
 const AdPlaceholder: React.FC<AdPlaceholderProps> = ({ position }) => {
-    if (!adsEnabled) return null;
+    if (!ads_enabled) return null;
 
     if (position === 'bottom') {
         return (
-            <div className="w-full max-w-4xl mx-auto px-4 py-8 min-[1300px]:hidden">
+            <div className="w-full max-w-5xl mx-auto px-4 py-8 min-[1300px]:hidden">
                 <div className="w-full h-[100px] bg-zinc-900/20 border border-dashed border-zinc-800/50 rounded-2xl flex flex-col items-center justify-center p-4 text-center group transition-colors hover:border-zinc-700">
                     <span className="material-symbols-outlined text-zinc-800 group-hover:text-zinc-700 mb-1 text-xl transition-colors">ads_click</span>
                     <span className="text-[10px] uppercase font-black tracking-widest text-zinc-800 group-hover:text-zinc-700 transition-colors">Ad Space</span>

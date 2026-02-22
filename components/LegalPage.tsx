@@ -17,7 +17,7 @@ const LegalPage: React.FC<LegalPageProps> = ({ type }) => {
     const content = type === 'privacy' ? t.privacyContent : t.cookiesContent;
 
     return (
-        <div className="w-full max-w-4xl mx-auto py-12 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="w-full max-w-5xl mx-auto py-12 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-3 mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-red-600/10 flex items-center justify-center border border-red-500/20">
                     <span className="material-symbols-outlined text-red-500">
