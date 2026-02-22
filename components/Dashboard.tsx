@@ -291,7 +291,7 @@ const Dashboard: React.FC = () => {
                                             </span>
                                         )}
                                     </td>
-                                    {/* Column: MetrodleBCN */}
+                                    {/* Column: MetrodleBCN UX*/}
                                     <td className="p-5">
                                         {j.metrodle ? (
                                             <div className="flex items-center gap-4">
@@ -307,7 +307,7 @@ const Dashboard: React.FC = () => {
                                             </div>
                                         ) : <span className="text-[10px] font-black text-zinc-800">—</span>}
                                     </td>
-                                    {/* Column: Ruta BCN UX */}
+                                    {/* Column: RutaBCN UX*/}
                                     <td className="p-5">
                                         {j.ruta ? (
                                             <div className="flex items-center gap-4">
