@@ -1,6 +1,62 @@
 
 import { Station, GuessResult, MatchType } from '../types';
 
+
+import { STATIONS } from '../constants';
+
+// Pre-calculate adjacency list for BFS
+const getAdjacencyList = () => {
+    const lineStations = new Map<string, { id: string, order: number }[]>();
+    STATIONS.forEach(s => {
+        s.lines.forEach(line => {
+            if (!lineStations.has(line)) lineStations.set(line, []);
+            lineStations.get(line)!.push({ id: s.id, order: s.lineOrders[line] });
+        });
+    });
+
+    // Sort each line by order
+    lineStations.forEach(stations => stations.sort((a, b) => a.order - b.order));
+
+    const neighbors = new Map<string, Set<string>>();
+    lineStations.forEach(stations => {
+        for (let i = 0; i < stations.length - 1; i++) {
+            const s1 = stations[i].id;
+            const s2 = stations[i + 1].id;
+            if (!neighbors.has(s1)) neighbors.set(s1, new Set());
+            if (!neighbors.has(s2)) neighbors.set(s2, new Set());
+            neighbors.get(s1)!.add(s2);
+            neighbors.get(s2)!.add(s1);
+        }
+    });
+    return neighbors;
+};
+
+const NEIGHBORS = getAdjacencyList();
+
+const calculateShortestDistance = (startId: string, endId: string): number => {
+    if (startId === endId) return 0;
+
+    const queue: [string, number][] = [[startId, 0]];
+    const visited = new Set<string>([startId]);
+
+    while (queue.length > 0) {
+        const [currentId, dist] = queue.shift()!;
+
+        const currentNeighbors = NEIGHBORS.get(currentId);
+        if (currentNeighbors) {
+            for (const neighborId of currentNeighbors) {
+                if (neighborId === endId) return dist + 1;
+                if (!visited.has(neighborId)) {
+                    visited.add(neighborId);
+                    queue.push([neighborId, dist + 1]);
+                }
+            }
+        }
+    }
+
+    return 99; // Fallback should not happen in a connected network
+};
+
 export const calculateResult = (guessed: Station, targetStation: Station): GuessResult => {
     const nameMatch = guessed.id === targetStation.id;
 
@@ -53,29 +109,18 @@ export const calculateResult = (guessed: Station, targetStation: Station): Guess
         connectionsMatch = MatchType.PARTIAL;
     }
 
-    // Distància: Càlcul basat en la distància mínima entre línies compartides
-    let distanceMatch = 0;
+    // Distància: Càlcul real basat en BFS (nombre d'estacions)
+    const distanceMatch = calculateShortestDistance(guessed.id, targetStation.id);
     let distanceDirection: 'up' | 'down' | 'none' = 'none';
 
+    // Determinar dirección solo si están en la misma línea
     if (sharedLines.length > 0) {
-        const distances = sharedLines.map(line => {
-            const orderGuessed = guessed.lineOrders[line];
-            const orderTarget = targetStation.lineOrders[line];
-            if (orderGuessed === undefined || orderTarget === undefined) {
-                return { dist: Infinity, dir: 'none' as const };
-            }
-            return {
-                dist: Math.abs(orderGuessed - orderTarget),
-                dir: (orderGuessed < orderTarget ? 'up' : orderGuessed > orderTarget ? 'down' : 'none') as 'up' | 'down' | 'none'
-            };
-        });
-
-        const minResult = distances.reduce((prev, curr) => (curr.dist < prev.dist ? curr : prev));
-        distanceMatch = minResult.dist;
-        distanceDirection = minResult.dir;
-    } else {
-        distanceMatch = 10;
-        distanceDirection = 'none';
+        const line = sharedLines[0];
+        const orderGuessed = guessed.lineOrders[line];
+        const orderTarget = targetStation.lineOrders[line];
+        if (orderGuessed !== undefined && orderTarget !== undefined) {
+            distanceDirection = orderGuessed < orderTarget ? 'up' : orderGuessed > orderTarget ? 'down' : 'none';
+        }
     }
 
     return {
