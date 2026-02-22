@@ -120,6 +120,18 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
         }
     };
 
+
+    // Format date for display
+    const formattedDate = useMemo(() => {
+        if (!dailyRoute?.date) return '';
+        const d = new Date(dailyRoute.date);
+        return d.toLocaleDateString(t.id === 'es' ? 'es-ES' : 'ca-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }, [dailyRoute?.date, t.id]);
+
     if (routeLoading || stateLoading) {
         return (
             <div className="flex-1 flex items-center justify-center">
@@ -133,7 +145,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
     return (
         <div className="flex-1 flex flex-col items-center w-full max-w-md mx-auto h-[calc(100vh-180px)]">
             <div className="mb-4 flex items-center justify-center gap-4 text-zinc-500 font-bold text-xs uppercase tracking-widest text-center">
-                <span>{t.day} #{dailyRoute.dayNumber}</span>
+                <span>{formattedDate}</span>
                 <span>•</span>
                 <span>{targetPath.length - 1} {t.stops || 'STOPS'}</span>
                 {errors > 0 && (
@@ -281,6 +293,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                 </div>
             )}
 
+
             {showStats && <StatsModal
                 onClose={() => setShowStats(false)}
                 guesses={[]} // Grid format not applicable here
@@ -291,6 +304,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                 currentAttempts={(correctStationIds.length - 1) + errors}
                 solveTime={solveTime}
                 dayNumber={dailyRoute.dayNumber}
+                date={dailyRoute.date}
                 stats={stats}
                 gameType="ruta"
             />}

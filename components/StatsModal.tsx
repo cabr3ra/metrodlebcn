@@ -6,6 +6,7 @@ import { UserStats } from '../hooks/useUserStats';
 
 import { useLanguage } from '../context/LanguageContext';
 
+
 interface StatsModalProps {
   guesses: GuessResult[];
   won: boolean;
@@ -13,6 +14,7 @@ interface StatsModalProps {
   onClose: () => void;
   solveTime: number | null;
   dayNumber: number;
+  date?: string;
   stats: UserStats | null;
   gameType?: 'metrodle' | 'ruta'; // Changed from gameId
   origin?: Station;
@@ -20,9 +22,20 @@ interface StatsModalProps {
   currentAttempts?: number;
 }
 
-const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, solveTime, dayNumber, stats, gameType = 'metrodle', origin, errorCount = 0, currentAttempts }) => {
+const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, solveTime, dayNumber, date, stats, gameType = 'metrodle', origin, errorCount = 0, currentAttempts }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+
+  const formattedDate = React.useMemo(() => {
+    if (!date) return `#${dayNumber}`;
+    const d = new Date(date);
+    return d.toLocaleDateString(t.id === 'es' ? 'es-ES' : 'ca-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }, [date, dayNumber, t.id]);
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -30,12 +43,11 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
   };
 
   const getShareText = () => {
-    // ... same logic
     const timeStr = solveTime ? `⏱️ ${formatTime(solveTime)}` : '';
 
     if (gameType === 'ruta') {
       const attempts = currentAttempts || 0;
-      return `Ruta BCN #${dayNumber} 🚇\n${won ? 'Completado' : 'X'} - ${attempts} ${t.attempts.toLowerCase()}\n${timeStr}\n\n📲 metrodlebcn.app\n#RutaBCN #Barcelona #Metro`;
+      return `Ruta BCN ${formattedDate} 🚇\n${won ? 'Completado' : 'X'} - ${attempts} ${t.attempts.toLowerCase()}\n${timeStr}\n\n📲 metrodlebcn.app\n#RutaBCN #Barcelona #Metro`;
     }
 
     const attempts = won ? guesses.length : 'X';
@@ -50,7 +62,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
       return row;
     }).join('\n');
 
-    return `Metrodle BCN #${dayNumber} 🚇\n${attempts}/6 ${timeStr}\n\n${grid}\n\n📲 metrodlebcn.app\n#MetrodleBCN #Barcelona #Metro`;
+    return `Metrodle BCN ${formattedDate} 🚇\n${attempts}/6 ${timeStr}\n\n${grid}\n\n📲 metrodlebcn.app\n#MetrodleBCN #Barcelona #Metro`;
   };
 
   const copyToClipboard = () => {

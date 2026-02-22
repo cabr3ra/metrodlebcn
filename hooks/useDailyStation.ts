@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Station } from '../types';
 
+
 export function useDailyStation() {
     const [station, setStation] = useState<Station | null>(null);
     const [dayNumber, setDayNumber] = useState<number>(0);
+    const [date, setDate] = useState<string>('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +25,8 @@ export function useDailyStation() {
                     throw new Error('No active game found for today (BCN time).');
                 }
 
-                const { date, station_id } = rpcData[0]; // RPC returns array
+                const { date: dbDate, station_id } = rpcData[0]; // RPC returns array
+                setDate(dbDate);
 
                 // 2. Fetch full station details using the ID
                 const { data, error } = await supabase
@@ -76,5 +79,6 @@ export function useDailyStation() {
         fetchDailyStation();
     }, []);
 
-    return { station, dayNumber, loading, error };
+
+    return { station, dayNumber, date, loading, error };
 }

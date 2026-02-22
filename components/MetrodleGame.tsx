@@ -21,8 +21,20 @@ interface MetrodleGameProps {
 
 const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, onGameOver }) => {
     const { t } = useLanguage();
-    const { station: dailyStation, dayNumber: fetchedDayNumber, loading: stationLoading } = useDailyStation();
+
+    const { station: dailyStation, dayNumber: fetchedDayNumber, date: dailyDate, loading: stationLoading } = useDailyStation();
     const today = new Date().toISOString().split('T')[0];
+
+    // Format date for display
+    const formattedDate = useMemo(() => {
+        if (!dailyDate) return '';
+        const d = new Date(dailyDate);
+        return d.toLocaleDateString(t.id === 'es' ? 'es-ES' : 'ca-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }, [dailyDate, t.id]);
     const {
         guesses: remoteGuesses,
         persistGuess,
@@ -118,9 +130,10 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
     }
 
     return (
+
         <div className="flex-1 flex flex-col items-center w-full">
             <div className="mb-2 text-zinc-500 font-bold text-xs uppercase tracking-widest">
-                {t.day} #{dayNumber}
+                {formattedDate}
             </div>
 
             <GameGrid guesses={guesses} maxAttempts={6} />
@@ -152,6 +165,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 </div>
             )}
 
+
             {showStats && <StatsModal
                 onClose={() => setShowStats(false)}
                 guesses={guesses}
@@ -159,6 +173,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 target={targetStation}
                 solveTime={solveTime}
                 dayNumber={dayNumber}
+                date={dailyDate}
                 currentAttempts={guesses.length}
                 stats={stats}
             />}
