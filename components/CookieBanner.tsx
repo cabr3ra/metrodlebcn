@@ -24,7 +24,7 @@ const CookieBanner: React.FC = () => {
 
     return (
         <div className="fixed bottom-6 left-6 right-6 z-[100] animate-in slide-in-from-bottom-8 duration-700">
-            <div className="max-w-4xl mx-auto bg-zinc-900/95 backdrop-blur-xl border border-zinc-800 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-center gap-6">
+            <div className="max-w-5xl mx-auto bg-zinc-900/95 backdrop-blur-xl border border-zinc-800 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-center gap-6">
                 <div className="flex-1 flex gap-4 items-center">
                     <div className="w-12 h-12 rounded-2xl bg-zinc-800 flex items-center justify-center flex-shrink-0">
                         <span className="material-symbols-outlined text-red-500 text-2xl">cookie</span>

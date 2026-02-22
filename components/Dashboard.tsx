@@ -171,65 +171,86 @@ const Dashboard: React.FC = () => {
                 ))}
             </div>
 
+
             {/* Advanced Filters */}
-            <div className="bg-zinc-950 border border-zinc-900 p-6 rounded-3xl mb-8 shadow-2xl">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 mb-6 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-sm">tune</span> Panel de Filtros Analíticos
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2 ml-1">Usuario (ID)</label>
-                        <input
-                            type="text"
-                            placeholder="Buscar ID..."
-                            className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition-colors"
-                            value={filters.search}
-                            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2 ml-1">Fidelización</label>
-                        <select
-                            className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition-colors cursor-pointer"
-                            value={filters.loyalty}
-                            onChange={(e) => setFilters({ ...filters, loyalty: e.target.value })}
-                        >
-                            <option value="">Cualquier flujo</option>
-                            <option value="full">🚀 Reto Completo</option>
-                            <option value="metrodle">Solo Metrodle</option>
-                            <option value="ruta">Solo Ruta BCN</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2 ml-1">Resultado UX</label>
-                        <select
-                            className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition-colors cursor-pointer"
-                            value={filters.outcome}
-                            onChange={(e) => setFilters({ ...filters, outcome: e.target.value })}
-                        >
-                            <option value="">Cualquier resultado</option>
-                            <option value="won">Victorias</option>
-                            <option value="lost">Derrotas (completado)</option>
-                            <option value="abandoned">Abandonos (en curso)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2 ml-1">Social / Viral</label>
-                        <div
-                            onClick={() => setFilters({ ...filters, viral: !filters.viral })}
-                            className={`w-full flex items-center justify-center gap-2 h-[46px] border rounded-2xl cursor-pointer transition-all ${filters.viral ? 'bg-red-500/10 border-red-500 text-red-500' : 'bg-zinc-900 border-zinc-800 text-zinc-500'}`}
-                        >
-                            <span className="material-symbols-outlined text-sm">{filters.viral ? 'check_circle' : 'share'}</span>
-                            <span className="text-xs font-black uppercase tracking-widest">Solo Compartidos</span>
+            <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-[2.5rem] mb-10 shadow-2xl overflow-hidden relative group">
+                {/* Decoration */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 blur-[80px] -mr-32 -mt-32 rounded-full pointer-events-none"></div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 relative z-10">
+                    {/* Search Field */}
+                    <div className="flex flex-col gap-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Usuario</label>
+                        <div className="relative">
+                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 text-sm">search</span>
+                            <input
+                                type="text"
+                                placeholder="Escribe ID..."
+                                className="w-full bg-zinc-900/50 border border-zinc-800 rounded-2xl pl-11 pr-4 py-3.5 text-xs font-bold text-white placeholder:text-zinc-700 focus:outline-none focus:border-red-500 focus:bg-zinc-900 transition-all h-[49px]"
+                                value={filters.search}
+                                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                            />
                         </div>
                     </div>
-                    <div className="flex items-end gap-2">
+
+                    {/* Loyalty Select */}
+                    <div className="flex flex-col gap-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Fidelización</label>
+                        <div className="relative">
+                            <select
+                                className="w-full bg-zinc-900/50 border border-zinc-800 rounded-2xl px-4 py-3.5 text-xs font-bold text-white appearance-none focus:outline-none focus:border-red-500 focus:bg-zinc-900 transition-all cursor-pointer h-[49px]"
+                                value={filters.loyalty}
+                                onChange={(e) => setFilters({ ...filters, loyalty: e.target.value })}
+                            >
+                                <option value="">Toda la actividad</option>
+                                <option value="full">Reto Completado</option>
+                                <option value="metrodle">Solo MetrodleBCN</option>
+                                <option value="ruta">Solo RutaBCN</option>
+                            </select>
+                            <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none text-sm">unfold_more</span>
+                        </div>
+                    </div>
+
+                    {/* Outcome Select */}
+                    <div className="flex flex-col gap-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Estado Session</label>
+                        <div className="relative">
+                            <select
+                                className="w-full bg-zinc-900/50 border border-zinc-800 rounded-2xl px-4 py-3.5 text-xs font-bold text-white appearance-none focus:outline-none focus:border-red-500 focus:bg-zinc-900 transition-all cursor-pointer h-[49px]"
+                                value={filters.outcome}
+                                onChange={(e) => setFilters({ ...filters, outcome: e.target.value })}
+                            >
+                                <option value="">Cualquier estado</option>
+                                <option value="won">Victoria</option>
+                                <option value="lost">Fin sin éxito</option>
+                                <option value="abandoned">Abandono</option>
+                            </select>
+                            <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none text-sm">unfold_more</span>
+                        </div>
+                    </div>
+
+
+                    {/* Social Toggle */}
+                    <div className="flex flex-col gap-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Social</label>
+                        <button
+                            onClick={() => setFilters({ ...filters, viral: !filters.viral })}
+                            className={`w-full flex items-center justify-center gap-3 h-[49px] border rounded-2xl transition-all duration-300 ${filters.viral ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-900/20' : 'bg-zinc-900/50 border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}
+                        >
+                            <span className="material-symbols-outlined text-base">{filters.viral ? 'share' : 'share'}</span>
+                            <span className="text-[11px] font-black uppercase tracking-[0.1em]">Compartidos</span>
+                        </button>
+                    </div>
+
+                    {/* Update Button */}
+                    <div className="flex flex-col gap-2">
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-transparent pointer-events-none select-none ml-1">Actualizar</label>
                         <button
                             onClick={fetchSessions}
-                            className="flex-1 h-[46px] bg-red-600 hover:bg-red-500 text-white rounded-2xl transition-all active:scale-95 shadow-lg shadow-red-900/20 flex items-center justify-center gap-2"
+                            className="w-full h-[49px] bg-white text-zinc-950 hover:bg-zinc-200 rounded-2xl transition-all active:scale-95 shadow-xl flex items-center justify-center gap-3 group"
                         >
-                            <span className="material-symbols-outlined text-sm">refresh</span>
-                            <span className="text-xs font-black uppercase tracking-widest">Actualizar</span>
+                            <span className="material-symbols-outlined text-base font-bold transition-transform group-active:rotate-180 duration-500">sync</span>
+                            <span className="text-[11px] font-black uppercase tracking-[0.1em]">Actualizar</span>
                         </button>
                     </div>
                 </div>
@@ -243,9 +264,9 @@ const Dashboard: React.FC = () => {
                             <tr className="bg-zinc-950/50 border-b border-zinc-800">
                                 <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Perfil y Viaje</th>
                                 <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-center">Fidelidad</th>
-                                <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Metrodle (UX)</th>
-                                <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">Ruta BCN (UX)</th>
-                                <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-center">Viralidad</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">MetrodleBCN</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500">RutaBCN</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-center">Compartidos</th>
                                 <th className="p-5 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-center">Tiempo Total</th>
                             </tr>
                         </thead>
@@ -270,7 +291,7 @@ const Dashboard: React.FC = () => {
                                             </span>
                                         )}
                                     </td>
-                                    {/* Column: Metrodle UX */}
+                                    {/* Column: MetrodleBCN */}
                                     <td className="p-5">
                                         {j.metrodle ? (
                                             <div className="flex items-center gap-4">
