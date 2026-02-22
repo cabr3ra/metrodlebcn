@@ -34,11 +34,13 @@ Resumen del rendimiento a largo plazo para cada modo de juego.
 ## 3. Nivel de Sesión (`game_sessions`)
 Datos detallados sobre los desafíos diarios específicos.
 
+
 | Variable | Descripción | Información que aporta |
 | :--- | :--- | :--- |
 | **date** | Fecha del desafío diario específico. | Relaciona el comportamiento con la dificultad del puzzle. |
 | **attempts** | Array de IDs de estaciones intentadas. | **Analítica Profunda:** Muestra el camino que toman los usuarios. |
 | **won** | Resultado booleano (Verdadero/Falso). | KPI principal: Tasa de éxito del día. |
+| **status** | Estado de la sesión ('started' o 'completed'). | **Índice de Abandono:** Permite saber cuántos se rinden. |
 | **error_log** | Array de IDs de estaciones fallidas (Modo Ruta). | **Mapa de Calor:** Identifica los transbordos exactos que confunden. |
 | **shares_count** | Contador de clics en los botones de compartir. | **Analítica Viral:** Mide la fricción social y el factor de "presumir". |
 | **duration_seconds**| Tiempo total pasado en la sesión. | Clasificaciones de velocidad y validación de dificultad. |
@@ -49,6 +51,7 @@ Datos detallados sobre los desafíos diarios específicos.
 ## Preguntas Estratégicas del Dashboard
 Esta estructura de datos permite responder a:
 1. **¿Qué transbordo es el más confuso de Barcelona?** (Frecuencia en `error_log`).
-2. **¿Qué desafíos se vuelven virales?** (Picos en `shares_count`).
-3. **¿El juego se está volviendo más difícil?** (Tendencia de `duration_seconds` y tasa de `won`).
-4. **¿Dónde abandonan los jugadores?** (Comparar longitud de `attempts` vs tasa de completado).
+2. **¿Cuál es el Índice de Abandono de hoy?** (Comparar `status = started` vs `status = completed`).
+3. **¿Qué desafíos se vuelven virales?** (Picos en `shares_count`).
+4. **¿El juego se está volviendo más difícil?** (Tendencia de `duration_seconds` y tasa de `won`).
+5. **¿Dónde abandonan los jugadores?** (Analizar `attempts` cuando el `status` es `started` pero no `completed`).

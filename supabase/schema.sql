@@ -89,6 +89,7 @@ CREATE POLICY "Users can update own stats" ON public.user_stats FOR UPDATE USING
 CREATE POLICY "Users can insert own stats" ON public.user_stats FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 
+
 -- 7. Game Sessions (History of plays & stored state)
 CREATE TABLE IF NOT EXISTS public.game_sessions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -99,6 +100,7 @@ CREATE TABLE IF NOT EXISTS public.game_sessions (
     attempts JSONB DEFAULT '[]'::jsonb, -- Estaciones intentadas / Camino correcto en ruta
     won BOOLEAN DEFAULT FALSE,
     completed BOOLEAN DEFAULT FALSE,
+    status TEXT DEFAULT 'started', -- 'started', 'completed' (Índice de abandono)
     errors INTEGER DEFAULT 0, -- Cantidad de errores
     error_log JSONB DEFAULT '[]'::jsonb, -- IDs de estaciones donde falló el usuario (Mapa de calor)
     shares_count INTEGER DEFAULT 0, -- Cuántas veces ha compartido el resultado

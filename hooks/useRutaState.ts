@@ -33,6 +33,7 @@ export function useRutaState(date: string, origin: Station | null, destination: 
                     .eq('mode_id', 'ruta')
                     .maybeSingle();
 
+
                 if (mounted && data) {
                     setDbSessionId(data.id);
                     setIsCompleted(data.completed);
@@ -48,9 +49,25 @@ export function useRutaState(date: string, origin: Station | null, destination: 
                         setErrors(data.errors);
                     }
                 } else if (mounted) {
+                    // Initialize session as 'started'
+                    const { data: newData, error: insertError } = await supabase
+                        .from('game_sessions')
+                        .insert({
+                            user_id: user!.id,
+                            date,
+                            mode_id: 'ruta',
+                            status: 'started',
+                            completed: false,
+                            attempts: [origin.id]
+                        })
+                        .select()
+                        .single();
+
+                    if (!insertError && newData) {
+                        setDbSessionId(newData.id);
+                    }
                     setCorrectStationIds([origin.id]);
                     setErrorLog([]);
-                    setDbSessionId(null);
                     setIsCompleted(false);
                     setSharesCount(0);
                 }
@@ -78,6 +95,7 @@ export function useRutaState(date: string, origin: Station | null, destination: 
             attempts: newIds,
             won: completed,
             completed: completed,
+            status: completed ? 'completed' : 'started',
             errors: newErrorLog.length,
             error_log: newErrorLog,
             updated_at: new Date().toISOString()

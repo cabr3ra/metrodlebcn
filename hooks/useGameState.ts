@@ -26,6 +26,7 @@ export function useGameState(date: string, targetStation: Station | null, modeId
 
         let mounted = true;
 
+
         async function loadState() {
             try {
                 setLoading(true);
@@ -57,8 +58,24 @@ export function useGameState(date: string, targetStation: Station | null, modeId
                         setGuesses(hydratedGuesses);
                     }
                 } else if (mounted) {
+                    // Initialize session as 'started'
+                    const { data: newData, error: insertError } = await supabase
+                        .from('game_sessions')
+                        .insert({
+                            user_id: user!.id,
+                            date,
+                            mode_id: modeId,
+                            target_station_id: targetStation?.id,
+                            status: 'started',
+                            completed: false
+                        })
+                        .select()
+                        .single();
+
+                    if (!insertError && newData) {
+                        setDbSessionId(newData.id);
+                    }
                     setGuesses([]);
-                    setDbSessionId(null);
                     setIsCompleted(false);
                     setSharesCount(0);
                 }
@@ -77,6 +94,8 @@ export function useGameState(date: string, targetStation: Station | null, modeId
     const persistGuess = async (newAttemptIds: string[], won: boolean, duration?: number) => {
         if (!user) return;
 
+        const completed = won || (modeId === 'metrodle' && newAttemptIds.length >= 6);
+
         const payload = {
             user_id: user.id,
             date,
@@ -84,7 +103,8 @@ export function useGameState(date: string, targetStation: Station | null, modeId
             mode_id: modeId,
             attempts: newAttemptIds,
             won,
-            completed: won || (modeId === 'metrodle' && newAttemptIds.length >= 6),
+            completed,
+            status: completed ? 'completed' : 'started',
             duration_seconds: duration !== undefined ? duration : solveTimeState,
             updated_at: new Date().toISOString()
         };
