@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
-const social_links = true;
+const social_links = false;
 
 const Footer: React.FC = () => {
     const { t } = useLanguage();

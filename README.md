@@ -18,7 +18,7 @@ Benvingut a **Metrodle BCN**, un joc estil "Wordle" on l'objectiu és endevinar 
     *   **Tipus**: Si és *Subterrània*, *Superfície* o *Elevada*.
     *   **Posició**: Si està al *Centre* de la línia o a un *Extrem*.
     *   **Connexions**: Si té enllaç amb *Bus*, *Tram*, *Rodalies*, *FGC*, etc.
-    *   **Distància**: A quants quilòmetres distància física es troba el teu intent de l'estació objectiu.
+    *   **Distància**: A quantes estacions de distància es troba el teu intent de l'estació objectiu.
 3.  Utilitza aquestes pistes per afinar el teu proper intent.
 4.  Tens **6 intents** per trobar l'estació del dia!
 
@@ -56,7 +56,7 @@ Bienvenido a **Metrodle BCN**, un juego estilo "Wordle" donde el objetivo es adi
     *   **Tipo**: Si es *Subterránea*, *Superficie* o *Elevada*.
     *   **Posición**: Si está en el *Centro* de la línea o en un *Extremo*.
     *   **Conexiones**: Si tiene enlace con *Bus*, *Tram*, *Rodalies*, *FGC*, etc.
-    *   **Distancia**: A cuántos kilómetros de distancia física se encuentra tu intento de la estación objetivo.
+    *   **Distancia**: A cuántas estaciones de distancia se encuentra tu intento de la estación objetivo.
 3.  Utiliza estas pistas para afinar tu próximo intento.
 4.  ¡Tienes **6 intentos** para encontrar la estación del día!
 
@@ -94,7 +94,7 @@ Welcome to **Metrodle BCN**, a "Wordle" style game where the goal is to guess a 
     *   **Type**: Whether it is *Underground*, *Surface*, or *Elevated*.
     *   **Position**: Whether it is in the *Center* of the line or at an *End*.
     *   **Connections**: If it has links to *Bus*, *Tram*, *Rodalies* (Commuter Rail), *FGC*, etc.
-    *   **Distance**: How many kilometers away your guess is from the target station.
+    *   **Distance**: How many stations away your guess is from the target station.
 3.  Use these clues to refine your next attempt.
 4.  You have **6 attempts** to find the station of the day!
 
