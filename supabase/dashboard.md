@@ -1,54 +1,54 @@
 
-# Metrodle BCN - Dashboard Data Dictionary
+# Metrodle BCN - Diccionario de Datos del Dashboard
 
-This document details the structure and purpose of the data collected from users, designed for deep analytics and game improvement.
+Este documento detalla la estructura y el propósito de los datos recogidos de los usuarios, diseñados para analíticas profundas y mejora del juego.
 
 ---
 
-## 1. Identity Level (Supabase Auth)
-Automatic connection and registration data.
+## 1. Nivel de Identidad (Supabase Auth)
+Datos automáticos de registro y conexión.
 
-| Variable | Description | Insights Provided |
+| Variable | Descripción | Información que aporta |
 | :--- | :--- | :--- |
-| **User ID** | Universal Unique ID (UUID). | Distinguishes players without storing real names. |
-| **Email** | User's email address. | Communication channel (if registration is enabled). |
-| **IP Address** | Last connection IP. | Approximate geolocation and fraud prevention. |
-| **User Agent** | Browser and OS metadata. | Technical breakdown: Phone vs PC balance. |
+| **User ID** | Identificador único universal (UUID). | Diferencia a los jugadores sin guardar sus nombres reales. |
+| **Email** | Correo electrónico del usuario. | Canal de comunicación (si el registro está activado). |
+| **IP Address** | Dirección IP de la última conexión. | Geolocalización aproximada y prevención de fraude. |
+| **User Agent** | Metadatos del navegador y sistema operativo. | Análisis técnico: Balance entre móvil y PC. |
 
 ---
 
-## 2. Historical Level (`user_stats`)
-Long-term performance summary for each game mode.
+## 2. Nivel Histórico (`user_stats`)
+Resumen del rendimiento a largo plazo para cada modo de juego.
 
-| Variable | Description | Insights Provided |
+| Variable | Descripción | Información que aporta |
 | :--- | :--- | :--- |
-| **mode_id** | The game mode ('metrodle' or 'ruta'). | Filters stats by game experience. |
-| **games_played** | Total sessions started. | Measures engagement and user volume. |
-| **wins** | Total successful game completions. | Measures user skill and success rate. |
-| **current_streak** | Number of consecutive days winning. | Indicates active recurrence and loyalty. |
-| **max_streak** | All-time highest win streak. | Shows maximum engagement level reached. |
-| **last_played_date**| Date of the last session. | Identifies churn and active user base. |
+| **mode_id** | El modo de juego ('metrodle' o 'ruta'). | Filtra las estadísticas por experiencia de juego. |
+| **games_played** | Total de sesiones iniciadas. | Mide el compromiso (engagement) y el volumen de usuarios. |
+| **wins** | Total de juegos completados con éxito. | Mide la habilidad del usuario y la tasa de éxito. |
+| **current_streak** | Número de días consecutivos ganando. | Indica la recurrencia activa y la fidelidad. |
+| **max_streak** | La mayor racha de victorias de la historia. | Muestra el nivel máximo de compromiso alcanzado. |
+| **last_played_date**| Fecha de la última sesión. | Identifica el abandono y la base de usuarios activos. |
 
 ---
 
-## 3. Session Level (`game_sessions`)
-Deep data about specific daily challenges.
+## 3. Nivel de Sesión (`game_sessions`)
+Datos detallados sobre los desafíos diarios específicos.
 
-| Variable | Description | Insights Provided |
+| Variable | Descripción | Información que aporta |
 | :--- | :--- | :--- |
-| **date** | The specific daily challenge date. | Links behavior to specific puzzle difficulty. |
-| **attempts** | Array of guessed/found station IDs. | **Deep Analytics:** Shows the path users take. |
-| **won** | Boolean result (True/False). | Core KPI: Today's success rate. |
-| **error_log** | Array of failed station IDs (Route mode). | **Heatmap:** Identifies the exact confusing transfers. |
-| **shares_count** | Integer tracking share button clicks. | **Viral Analytics:** Measures social friction and brag-factor. |
-| **duration_seconds**| Total time spent in the session. | Speed rankings and difficulty validation. |
-| **created_at** | Exact start timestamp. | Identifies peak traffic hours and behavior patterns. |
+| **date** | Fecha del desafío diario específico. | Relaciona el comportamiento con la dificultad del puzzle. |
+| **attempts** | Array de IDs de estaciones intentadas. | **Analítica Profunda:** Muestra el camino que toman los usuarios. |
+| **won** | Resultado booleano (Verdadero/Falso). | KPI principal: Tasa de éxito del día. |
+| **error_log** | Array de IDs de estaciones fallidas (Modo Ruta). | **Mapa de Calor:** Identifica los transbordos exactos que confunden. |
+| **shares_count** | Contador de clics en los botones de compartir. | **Analítica Viral:** Mide la fricción social y el factor de "presumir". |
+| **duration_seconds**| Tiempo total pasado en la sesión. | Clasificaciones de velocidad y validación de dificultad. |
+| **created_at** | Marca de tiempo exacta del inicio. | Identifica horas pico y patrones de comportamiento. |
 
 ---
 
-## Strategic Dashboard Questions
-This data structure allows answering:
-1. **Which transfer is the most confusing in BCN?** (Check `error_log` frequency).
-2. **Which challenges go viral?** (Check `shares_count` peaks).
-3. **Is the game getting harder?** (Track `duration_seconds` and `won` rate over time).
-4. **Where do players quit?** (Compare `attempts` length vs completion rate).
+## Preguntas Estratégicas del Dashboard
+Esta estructura de datos permite responder a:
+1. **¿Qué transbordo es el más confuso de Barcelona?** (Frecuencia en `error_log`).
+2. **¿Qué desafíos se vuelven virales?** (Picos en `shares_count`).
+3. **¿El juego se está volviendo más difícil?** (Tendencia de `duration_seconds` y tasa de `won`).
+4. **¿Dónde abandonan los jugadores?** (Comparar longitud de `attempts` vs tasa de completado).
