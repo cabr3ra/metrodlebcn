@@ -9,7 +9,10 @@ import SettingsModal from './components/SettingsModal';
 import MetrodleGame from './components/MetrodleGame';
 import RutaGame from './components/RutaGame';
 import PracticeGame from './components/PracticeGame';
+
+
 import Footer from './components/Footer';
+import Dashboard from './components/Dashboard';
 import LegalPage from './components/LegalPage';
 import CookieBanner from './components/CookieBanner';
 import AdPlaceholder from './components/AdPlaceholder';
@@ -88,7 +91,9 @@ const AppContent: React.FC<{
             />
           } />
           <Route path="/privacy" element={<LegalPage type="privacy" />} />
+
           <Route path="/cookies" element={<LegalPage type="cookies" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </main>
 

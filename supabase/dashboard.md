@@ -1,7 +1,10 @@
 
 # Metrodle BCN - Diccionario de Datos del Dashboard
 
-Este documento detalla la estructura y el propósito de los datos recogidos de los usuarios, diseñados para analíticas profundas y mejora del juego.
+
+Este documento detalla la estructura y el propósito de los datos recogidos de los usuarios, diseñados para analíticas profundas y mejora del juego. 
+
+> **Acceso al Dashboard Vivo**: Puedes acceder a la interfaz visual de estos datos a través del icono de monitoreo (📈) en el footer de la web o directamente en `/dashboard`.
 
 ---
 

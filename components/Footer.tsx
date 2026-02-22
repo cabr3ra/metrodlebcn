@@ -64,12 +64,21 @@ const Footer: React.FC = () => {
                         {t.cookiesPolicy}
                     </Link>
                     <div className="w-1 h-1 bg-zinc-800 rounded-full"></div>
+
                     <a
                         href="mailto:hola@metrodlebcn.app"
                         className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-red-500 transition-colors"
                     >
                         {t.contact}
                     </a>
+                    <div className="w-1 h-1 bg-zinc-800 rounded-full"></div>
+                    <Link
+                        to="/dashboard"
+                        className="text-zinc-700 hover:text-zinc-500 transition-colors flex items-center"
+                        title="Dashboard"
+                    >
+                        <span className="material-symbols-outlined text-sm">monitoring</span>
+                    </Link>
                 </div>
 
                 <p className="text-[9px] font-bold text-zinc-700 uppercase tracking-[0.15em] text-center opacity-60">
