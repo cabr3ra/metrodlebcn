@@ -30,10 +30,10 @@ const GameGrid: React.FC<GameGridProps> = ({ guesses, maxAttempts }) => {
       >
         <div className="text-left pl-4">{t.station}</div>
         <div className="text-center">{t.line}</div>
-        <div className="text-center">{t.posShort}</div>
-        <div className="text-center">{t.typeShort}</div>
-        <div className="text-center">{t.connShort}</div>
-        <div className="text-center">{t.distShort}</div>
+        <div className="text-center">{t.position}</div>
+        <div className="text-center">{t.type}</div>
+        <div className="text-center">{t.connections}</div>
+        <div className="text-center">{t.distance}</div>
       </div>
 
       {guesses.map((g, i) => (
