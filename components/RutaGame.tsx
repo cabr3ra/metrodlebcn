@@ -50,10 +50,8 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
         return findShortestPath(dailyRoute.origin.id, dailyRoute.destination.id, allStations) || [];
     }, [dailyRoute, allStations]);
 
-    // Derived state: objects for correct stations
-    const correctStations = useMemo(() => {
-        return correctStationIds.map(id => allStations.find(s => s.id === id)).filter(Boolean) as Station[];
-    }, [correctStationIds, allStations]);
+    // Derived state: objects for correct stations (not used as primary loop anymore, but kept for types if needed)
+    // We will now map over targetPath instead
 
     useEffect(() => {
         if (isCompleted) {
@@ -88,26 +86,30 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
             setGameStartTime(start);
         }
 
-        const nextStationIndex = correctStationIds.length;
-        const expectedStation = targetPath[nextStationIndex];
+        const isPartOfPath = targetPath.some(s => s.id === station.id);
 
-        if (station.id === expectedStation?.id) {
-            const newIds = [...correctStationIds, station.id];
-            setCorrectStationIds(newIds);
-            setSearchTerm('');
-            setLastError(null);
+        if (isPartOfPath) {
+            if (!correctStationIds.includes(station.id)) {
+                const newIds = [...correctStationIds, station.id];
+                setCorrectStationIds(newIds);
+                setSearchTerm('');
+                setLastError(null);
 
-            const isWin = newIds.length === targetPath.length;
-            persistProgress(newIds, isWin);
+                const isWin = newIds.length === targetPath.length;
+                persistProgress(newIds, isWin);
 
-            if (isWin) {
-                setWon(true);
-                setGameOver(true);
-                onGameOver(true);
-                const timeSpent = Math.floor((Date.now() - start!) / 1000);
-                setSolveTime(timeSpent);
-                updateStats(true, errors);
-                setTimeout(() => setShowStats(true), 1500);
+                if (isWin) {
+                    setWon(true);
+                    setGameOver(true);
+                    onGameOver(true);
+                    const timeSpent = Math.floor((Date.now() - start!) / 1000);
+                    setSolveTime(timeSpent);
+                    updateStats(true, errors);
+                    setTimeout(() => setShowStats(true), 1500);
+                }
+            } else {
+                // Already guessed, just clear
+                setSearchTerm('');
             }
         } else {
             const nextErrors = errors + 1;
@@ -168,8 +170,9 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                 ref={scrollRef}
                 className="flex-1 w-full overflow-y-auto px-4 py-8 mb-4 custom-scrollbar flex flex-col items-center"
             >
-                {correctStations.map((s, idx) => {
-                    const isLastStation = idx === correctStations.length - 1;
+                {targetPath.map((s, idx) => {
+                    const isGuessed = correctStationIds.includes(s.id);
+                    const isLastInPath = idx === targetPath.length - 1;
                     const nextStationInPath = targetPath[idx + 1];
                     const segmentLines = nextStationInPath ? (
                         s.lines.filter(line =>
@@ -187,82 +190,48 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                             <div className="flex items-center w-full h-4 relative z-20">
                                 <div className="w-4 flex flex-col items-center mr-4">
                                     <div
-                                        className={`w-4 h-4 rounded-full border-2 shrink-0 transition-all duration-700 ${isLastStation ? 'scale-125 shadow-[0_0_20px_rgba(255,255,255,0.6)] bg-white border-white ' + (idx > 0 ? 'animate-station-arrival' : '') : 'bg-zinc-900'
+                                        className={`w-4 h-4 rounded-full border-2 shrink-0 transition-all duration-700 ${isGuessed ? 'scale-125 shadow-[0_0_20px_rgba(255,255,255,0.3)] bg-white border-white' : 'bg-zinc-900 border-zinc-700'
                                             }`}
                                         style={{
-                                            borderColor: idx === 0 ? '#fff' : (finalLines.length > 0 ? (lineStyles[finalLines[0]]?.primary || '#555') : '#555')
+                                            borderColor: isGuessed ? (idx === 0 || isLastInPath ? '#fff' : (finalLines.length > 0 ? (lineStyles[finalLines[0]]?.primary || '#555') : '#555')) : '#27272a'
                                         }}
                                     />
                                 </div>
                                 <div className="flex-1 flex items-center h-full">
-                                    <span className={`text-lg transition-all duration-500 block leading-none ${isLastStation
+                                    <span className={`text-lg transition-all duration-500 block leading-none ${isGuessed
                                         ? 'text-white font-black translate-x-1'
-                                        : 'text-zinc-500 font-bold'
+                                        : 'text-zinc-700 font-bold opacity-30 select-none'
                                         }`}>
-                                        {s.name}
+                                        {isGuessed || gameOver ? s.name : '••••••••'}
                                     </span>
                                 </div>
                             </div>
 
                             {/* Connector Line Container - Z-index 10 to be behind dots */}
-                            <div className="flex w-full relative z-10">
-                                <div className="w-4 flex justify-center items-center relative mr-4">
-                                    {/* Dashed Guide Line (Background) - Shown for current AND previous segment for fluidity */}
-                                    {(isLastStation || idx === correctStations.length - 2) && !gameOver && (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-start mt-[-8px]">
-                                            {finalLines.map(lineId => (
-                                                <div
-                                                    key={`guide-${lineId}`}
-                                                    className="w-1 h-16 opacity-10 dashed-line-vertical"
-                                                    style={{ color: lineStyles[lineId]?.primary }}
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Solid Animated Path (Foreground) */}
-                                    {idx < correctStations.length - 1 && (
+                            {!isLastInPath && (
+                                <div className="flex w-full relative z-10">
+                                    <div className="w-4 flex justify-center items-center relative mr-4">
+                                        {/* Connector Line */}
                                         <div className="h-12 flex gap-[2px] mt-[-8px] mb-[8px] relative z-10">
                                             {finalLines.map(lineId => (
                                                 <div
                                                     key={`${s.id}-${lineId}`}
-                                                    className={`w-1.5 h-[calc(100%+16px)] origin-top ${idx === correctStations.length - 2 ? 'animate-grow-y' : ''}`}
+                                                    className="w-1.5 h-[calc(100%+16px)]"
                                                     style={{
-                                                        backgroundColor: lineStyles[lineId]?.primary,
-                                                        boxShadow: `0 0 10px ${lineStyles[lineId]?.primary}44`
+                                                        backgroundColor: lineStyles[lineId]?.primary || '#27272a',
+                                                        opacity: isGuessed && correctStationIds.includes(nextStationInPath?.id) ? 1 : 0.1,
+                                                        boxShadow: isGuessed && correctStationIds.includes(nextStationInPath?.id) ? `0 0 10px ${lineStyles[lineId]?.primary}44` : 'none'
                                                     }}
                                                 />
                                             ))}
                                         </div>
-                                    )}
-                                </div>
-
-                                {/* Label for next stop hint */}
-                                {isLastStation && !gameOver && (
-                                    <div className="flex-1 flex items-center h-16 relative z-10">
-                                        <span className="text-zinc-700 italic text-sm font-medium animate-pulse">
-                                            {t.nextStop || 'Siguiente parada...'}
-                                        </span>
                                     </div>
-                                )}
-                            </div>
+                                    <div className="flex-1 h-12"></div>
+                                </div>
+                            )}
                         </div>
                     );
                 })}
-
-                {/* Destination Placeholder (if not reached) */}
-                {!gameOver && (
-                    <div className="flex flex-col items-center w-full opacity-50 mt-4">
-                        <div className="flex items-center w-full gap-4">
-                            <div className="w-4 h-4 rounded-full border-2 border-white/20 shrink-0" />
-                            <div className="flex-1 py-2">
-                                <span className="text-lg font-bold text-zinc-700">
-                                    {dailyRoute.destination.name}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 {gameOver && (
                     <div className="p-6 bg-zinc-900 rounded-2xl text-center w-full max-w-sm border border-zinc-800 animate-in fade-in zoom-in-95 duration-500 mt-10">
@@ -283,8 +252,8 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
             </div>
 
             {lastError && !gameOver && (
-                <div className="mb-4 text-red-500 text-sm font-medium animate-bounce">
-                    ❌ {lastError} {t.isNotNext || 'is not the next station'}
+                <div className="mb-4 text-red-500 text-sm font-medium animate-bounce border-2 border-red-500/20 px-4 py-2 rounded-xl bg-red-500/5">
+                    ❌ <span className="font-bold">{lastError}</span> {t.none || 'is not in the route'}
                 </div>
             )}
 

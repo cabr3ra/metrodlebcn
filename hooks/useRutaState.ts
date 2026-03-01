@@ -61,7 +61,7 @@ export function useRutaState(
                             mode_id: 'ruta',
                             status: 'started',
                             completed: false,
-                            attempts: [origin.id]
+                            attempts: [origin.id, destination.id]
                         })
                         .select()
                         .single();
@@ -69,7 +69,7 @@ export function useRutaState(
                     if (!insertError && newData) {
                         setDbSessionId(newData.id);
                     }
-                    setCorrectStationIds([origin.id]);
+                    setCorrectStationIds([origin.id, destination.id]);
                     setErrorLog([]);
                     setIsCompleted(false);
                     setSharesCount(0);
