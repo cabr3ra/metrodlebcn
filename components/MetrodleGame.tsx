@@ -73,7 +73,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 setWon(true);
                 setGameOver(true);
                 onGameOver(true);
-            } else if (remoteGuesses.length >= 6) {
+            } else if (remoteGuesses.length >= 7) {
                 setGameOver(true);
                 onGameOver(true);
             }
@@ -105,7 +105,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
         setSearchTerm('');
 
         const isWin = result.nameMatch;
-        const isLoss = newGuesses.length >= 6 && !isWin;
+        const isLoss = newGuesses.length >= 7 && !isWin;
         const isFinished = isWin || isLoss;
 
         const guessIds = newGuesses.map(g => g.station.id);
@@ -142,7 +142,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 )}
             </div>
 
-            <GameGrid guesses={guesses} maxAttempts={6} />
+            <GameGrid guesses={guesses} maxAttempts={7} />
 
             {!gameOver && (
                 <div className="w-full mt-auto py-6 sticky bottom-0 bg-zinc-950/30 backdrop-blur-md border-t border-white/5">

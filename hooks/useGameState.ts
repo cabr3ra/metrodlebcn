@@ -92,7 +92,7 @@ export function useGameState(
     const persistGuess = async (newAttemptIds: string[], won: boolean, duration?: number) => {
         if (!user) return;
 
-        const completed = won || (modeId === 'metrodle' && newAttemptIds.length >= 6);
+        const completed = won || (modeId === 'metrodle' && newAttemptIds.length >= 7);
 
         const payload = {
             user_id: user.id,

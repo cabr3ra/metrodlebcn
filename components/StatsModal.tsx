@@ -64,7 +64,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ guesses, won, target, onClose, 
       return row;
     }).join('\n');
 
-    return `Metrodle BCN ${formattedDate} 🚇\n${attempts}/6 ${timeStr}\n\n${grid}\n\n📲 metrodlebcn.app\n#MetrodleBCN #Barcelona #Metro`;
+    return `Metrodle BCN ${formattedDate} 🚇\n${attempts}/7 ${timeStr}\n\n${grid}\n\n📲 metrodlebcn.app\n#MetrodleBCN #Barcelona #Metro`;
   };
 
 
