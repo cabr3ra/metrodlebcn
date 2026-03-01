@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
 
-const social_links = false;
-const dashboard_visible = false;
+const social_links = true;
+const dashboard_visible = true;
 
 const Footer: React.FC = () => {
     const { t } = useLanguage();

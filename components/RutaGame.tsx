@@ -145,8 +145,8 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
     if (!dailyRoute) return <div>Error loading route</div>;
 
     return (
-        <div className="flex-1 flex flex-col items-center w-full max-w-md mx-auto h-[calc(100vh-180px)]">
-            <div className="ticket-date ruta">
+        <div className="flex-1 flex flex-col items-center w-full mx-auto h-full min-h-0 overflow-hidden relative">
+            <div className="ticket-date ruta flex-shrink-0">
                 {formattedDate}
                 {gameOver && (
                     <div className={`ticket-stamp ${won ? 'validated' : 'expired'}`}>
@@ -155,7 +155,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                 )}
             </div>
 
-            <div className="mb-4 flex items-center justify-center gap-4 text-zinc-500 font-bold text-[10px] uppercase tracking-widest text-center">
+            <div className="mb-4 flex items-center justify-center gap-4 text-zinc-500 font-bold text-[10px] uppercase tracking-widest text-center flex-shrink-0">
                 <span>{targetPath.length - 1} {t.stops || 'STOPS'}</span>
                 {errors > 0 && (
                     <>
@@ -168,7 +168,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
             {/* Route Map (Vertical Line) */}
             <div
                 ref={scrollRef}
-                className="flex-1 w-full overflow-y-auto px-4 py-8 mb-4 custom-scrollbar flex flex-col items-center"
+                className="flex-1 w-full overflow-y-auto px-4 py-8 mb-4 custom-scrollbar flex flex-col items-center relative z-0"
             >
                 {targetPath.map((s, idx) => {
                     const isGuessed = correctStationIds.includes(s.id);
@@ -193,17 +193,24 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                                         className={`w-4 h-4 rounded-full border-2 shrink-0 transition-all duration-700 ${isGuessed ? 'scale-125 shadow-[0_0_20px_rgba(255,255,255,0.3)] bg-white border-white' : 'bg-zinc-900 border-zinc-700'
                                             }`}
                                         style={{
-                                            borderColor: isGuessed ? (idx === 0 || isLastInPath ? '#fff' : (finalLines.length > 0 ? (lineStyles[finalLines[0]]?.primary || '#555') : '#555')) : '#27272a'
+                                            borderColor: isGuessed ? (idx === 0 || isLastInPath ? '#fff' : (finalLines.length > 0 ? (lineStyles[finalLines[0]]?.primary || '#555') : '#555')) : '#3f3f46'
                                         }}
                                     />
                                 </div>
                                 <div className="flex-1 flex items-center h-full">
-                                    <span className={`text-lg transition-all duration-500 block leading-none ${isGuessed
-                                        ? 'text-white font-black translate-x-1'
-                                        : 'text-zinc-700 font-bold opacity-30 select-none'
-                                        }`}>
-                                        {isGuessed || gameOver ? s.name : '••••••••'}
-                                    </span>
+                                    <div className="flex flex-col">
+                                        <span className={`text-base sm:text-lg transition-all duration-500 block leading-none ${isGuessed
+                                            ? 'text-white font-black translate-x-1'
+                                            : 'text-zinc-300 font-bold opacity-40 select-none'
+                                            }`}>
+                                            {isGuessed || gameOver ? s.name : '••••••••'}
+                                        </span>
+                                        {!isGuessed && !gameOver && targetPath.findIndex(p => !correctStationIds.includes(p.id)) === idx && (
+                                            <span className="text-[10px] text-red-500/60 font-black uppercase tracking-widest mt-1 animate-pulse">
+                                                {t.nextStop || 'Siguiente parada...'}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -212,14 +219,14 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                                 <div className="flex w-full relative z-10">
                                     <div className="w-4 flex justify-center items-center relative mr-4">
                                         {/* Connector Line */}
-                                        <div className="h-12 flex gap-[2px] mt-[-8px] mb-[8px] relative z-10">
+                                        <div className="h-10 sm:h-12 flex gap-[2px] mt-[-8px] mb-[8px] relative z-10">
                                             {finalLines.map(lineId => (
                                                 <div
                                                     key={`${s.id}-${lineId}`}
                                                     className="w-1.5 h-[calc(100%+16px)]"
                                                     style={{
                                                         backgroundColor: lineStyles[lineId]?.primary || '#27272a',
-                                                        opacity: isGuessed && correctStationIds.includes(nextStationInPath?.id) ? 1 : 0.1,
+                                                        opacity: isGuessed && correctStationIds.includes(nextStationInPath?.id) ? 1 : 0.25,
                                                         boxShadow: isGuessed && correctStationIds.includes(nextStationInPath?.id) ? `0 0 10px ${lineStyles[lineId]?.primary}44` : 'none'
                                                     }}
                                                 />
@@ -234,31 +241,35 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                 })}
 
                 {gameOver && (
-                    <div className="p-6 bg-zinc-900 rounded-2xl text-center w-full max-w-sm border border-zinc-800 animate-in fade-in zoom-in-95 duration-500 mt-10">
-                        <h2 className="text-2xl font-bold mb-2">
-                            {won ? t.pathCompleted || 'Ruta completada!' : t.lost}
-                        </h2>
-                        <p className="text-zinc-500">
-                            {t.errors || 'Errors'}: <span className="font-bold text-red-500">{errors}</span>
-                        </p>
-                        <button
-                            onClick={() => setShowStats(true)}
-                            className="mt-4 px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full font-bold transition-transform active:scale-95 shadow-lg shadow-red-500/10"
-                        >
-                            {t.viewStats}
-                        </button>
+                    <div className="mt-4 sm:mt-10 p-3 sm:p-6 bg-zinc-900 rounded-xl sm:rounded-2xl w-full max-w-sm sm:max-w-md border border-zinc-800 animate-in fade-in zoom-in-95 duration-500">
+                        <div className="flex flex-row sm:flex-col items-center gap-3 sm:gap-4 w-full justify-between sm:justify-center">
+                            <div className="text-left sm:text-center shrink-0">
+                                <h2 className="text-base sm:text-2xl font-bold">
+                                    {won ? (t.pathCompleted || 'Ruta completada!') : t.lost}
+                                </h2>
+                                <p className="text-zinc-500 text-[10px] sm:text-sm">
+                                    {t.errors || 'Errors'}: <span className="font-bold text-red-500">{errors}</span>
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowStats(true)}
+                                className="px-4 py-2 sm:mt-2 sm:px-6 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs sm:text-base font-bold transition-transform active:scale-95 shadow-lg shadow-red-500/10 shrink-0"
+                            >
+                                {t.viewStats}
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
 
             {lastError && !gameOver && (
-                <div className="mb-4 text-red-500 text-sm font-medium animate-bounce border-2 border-red-500/20 px-4 py-2 rounded-xl bg-red-500/5">
+                <div className="mb-4 text-red-500 text-sm font-medium animate-bounce border-2 border-red-500/20 px-4 py-2 rounded-xl bg-red-500/5 flex-shrink-0">
                     ❌ <span className="font-bold">{lastError}</span> {t.none || 'is not in the route'}
                 </div>
             )}
 
             {!gameOver && (
-                <div className="w-full mt-auto py-6 sticky bottom-0">
+                <div className="w-full mt-auto py-6 sticky bottom-0 z-30 bg-zinc-950/30 backdrop-blur-md border-t border-white/5">
                     <SearchSuggestions
                         suggestions={suggestions}
                         onSelect={handleGuess}

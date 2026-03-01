@@ -14,15 +14,17 @@ const GameGrid: React.FC<GameGridProps> = ({ guesses, maxAttempts }) => {
   const { t } = useLanguage();
   const empties = Array.from({ length: Math.max(0, maxAttempts - guesses.length) });
 
-  // Estil de graella personalitzat segons la proporció: 3.5fr (Nom), 1.875fr x 4 (Atributs), 1fr (Distància)
+  // Estil de graella per a attributes de l'estació
   const gridStyle = {
     display: 'grid',
-    gridTemplateColumns: '3.5fr 1.875fr 1.875fr 1.875fr 1.875fr 1fr',
-    gap: '0.5rem'
+    gridTemplateColumns: 'minmax(60px, 3.5fr) 1.8fr 1.6fr 1.6fr 1.6fr 1.2fr',
+    gap: '0.25rem'
   };
 
+  // En escriptori el gap és més gran
+  const containerClass = "w-full flex flex-col gap-2 md:gap-3 pt-4 px-0.5 sm:px-0";
   return (
-    <div className="w-full flex flex-col gap-3 pt-4">
+    <div className={containerClass}>
       {/* Legend for desktop */}
       <div
         style={gridStyle}
@@ -46,12 +48,12 @@ const GameGrid: React.FC<GameGridProps> = ({ guesses, maxAttempts }) => {
           style={gridStyle}
           className="opacity-20"
         >
-          <div className="h-14 bg-zinc-200 dark:bg-zinc-800 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
-          <div className="h-14 bg-zinc-200 dark:bg-zinc-800 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
-          <div className="h-14 bg-zinc-200 dark:bg-zinc-800 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
-          <div className="h-14 bg-zinc-200 dark:bg-zinc-800 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
-          <div className="h-14 bg-zinc-200 dark:bg-zinc-800 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
-          <div className="h-14 bg-zinc-200 dark:bg-zinc-800 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
+          <div className="h-10 sm:h-14 bg-zinc-200 dark:bg-zinc-800 rounded-lg sm:rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
+          <div className="h-10 sm:h-14 bg-zinc-200 dark:bg-zinc-800 rounded-lg sm:rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
+          <div className="h-10 sm:h-14 bg-zinc-200 dark:bg-zinc-800 rounded-lg sm:rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
+          <div className="h-10 sm:h-14 bg-zinc-200 dark:bg-zinc-800 rounded-lg sm:rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
+          <div className="h-10 sm:h-14 bg-zinc-200 dark:bg-zinc-800 rounded-lg sm:rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
+          <div className="h-10 sm:h-14 bg-zinc-200 dark:bg-zinc-800 rounded-lg sm:rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700"></div>
         </div>
       ))}
     </div>

@@ -57,7 +57,7 @@ const AppContent: React.FC<{
   }
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors">
+    <div className="h-full flex flex-col transition-colors overflow-hidden">
       <Navbar
         onOpenHowTo={() => setShowHowTo(true)}
         onOpenStats={() => setShowStats(true)}
@@ -65,7 +65,7 @@ const AppContent: React.FC<{
         isGameOver={isStatsEnabled}
       />
 
-      <main className="flex-1 flex flex-col items-center p-4 max-w-5xl mx-auto w-full relative">
+      <main className="flex-1 flex flex-col items-center p-4 max-w-5xl mx-auto w-full relative overflow-hidden">
         <AdPlaceholder position="left" />
         <AdPlaceholder position="right" />
 
@@ -97,8 +97,8 @@ const AppContent: React.FC<{
         </Routes>
       </main>
 
-      <Footer />
       <AdPlaceholder position="bottom" />
+      <Footer />
 
       {showHowTo && (
         <HowToPlay

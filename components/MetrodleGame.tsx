@@ -157,17 +157,23 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
             )}
 
             {gameOver && (
-                <div className="mt-10 p-6 bg-zinc-900 rounded-2xl text-center w-full max-w-sm border border-zinc-800 animate-in fade-in zoom-in-95 duration-500">
-                    <h2 className="text-2xl font-bold mb-2">
-                        {won ? t.won : t.lost}
-                    </h2>
-                    <p className="text-zinc-500">{t.theStationWas} <span className="font-bold text-red-500">{targetStation?.name}</span></p>
-                    <button
-                        onClick={() => setShowStats(true)}
-                        className="mt-4 px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full font-bold transition-transform active:scale-95 shadow-lg shadow-red-500/10"
-                    >
-                        {t.viewStats}
-                    </button>
+                <div className="mt-4 sm:mt-10 p-3 sm:p-6 bg-zinc-900 rounded-xl sm:rounded-2xl w-full max-w-sm sm:max-w-md border border-zinc-800 animate-in fade-in zoom-in-95 duration-500">
+                    <div className="flex flex-row sm:flex-col items-center gap-3 sm:gap-4 w-full justify-between sm:justify-center">
+                        <div className="text-left sm:text-center shrink-0">
+                            <h2 className="text-base sm:text-2xl font-bold">
+                                {won ? t.won : t.lost}
+                            </h2>
+                            <p className="text-zinc-500 text-[10px] sm:text-sm">
+                                {t.theStationWas} <span className="font-bold text-red-500">{targetStation?.name}</span>
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setShowStats(true)}
+                            className="px-4 py-2 sm:mt-2 sm:px-6 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs sm:text-base font-bold transition-transform active:scale-95 shadow-lg shadow-red-500/10 shrink-0"
+                        >
+                            {t.viewStats}
+                        </button>
+                    </div>
                 </div>
             )}
 
