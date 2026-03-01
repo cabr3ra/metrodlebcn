@@ -2,16 +2,15 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { GuessResult, Station, MatchType } from '../types';
-import { STATIONS } from '../constants'; // Fallback for hydration
+import { GuessResult, Station } from '../types';
 import { calculateResult } from '../utils/gameLogic';
 
-// Helper to calculate match (logic copied from App.tsx or moved to utils)
-// Ideally this logic should be a shared utility.
-// For now, we assume we just need to reconstruct the objects.
-
-
-export function useGameState(date: string, targetStation: Station | null, modeId: string = 'metrodle') {
+export function useGameState(
+    date: string,
+    targetStation: Station | null,
+    allStations: Station[],
+    modeId: string = 'metrodle'
+) {
     const { user } = useAuth();
     const [guesses, setGuesses] = useState<GuessResult[]>([]);
     const [loading, setLoading] = useState(true);
@@ -22,10 +21,9 @@ export function useGameState(date: string, targetStation: Station | null, modeId
     const [sharesCount, setSharesCount] = useState(0);
 
     useEffect(() => {
-        if (!user || !date || !targetStation) return;
+        if (!user || !date || !targetStation || allStations.length === 0) return;
 
         let mounted = true;
-
 
         async function loadState() {
             try {
@@ -47,12 +45,12 @@ export function useGameState(date: string, targetStation: Station | null, modeId
                     setSharesCount(data.shares_count || 0);
                     if (data.duration_seconds) setSolveTimeState(data.duration_seconds);
 
-                    // Hydrate attempts (guesses)
+                    // Hydrate attempts (guesses) using the provided allStations array
                     if (data.attempts && Array.isArray(data.attempts)) {
                         const hydratedGuesses = data.attempts.map((id: string) => {
-                            const station = STATIONS.find(s => s.id === id);
+                            const station = allStations.find(s => s.id === id);
                             if (!station) return null;
-                            return calculateResult(station, targetStation);
+                            return calculateResult(station, targetStation, allStations);
                         }).filter(g => g !== null) as GuessResult[];
 
                         setGuesses(hydratedGuesses);
@@ -89,7 +87,7 @@ export function useGameState(date: string, targetStation: Station | null, modeId
         loadState();
 
         return () => { mounted = false; };
-    }, [user, date, targetStation]);
+    }, [user, date, targetStation, allStations, modeId]);
 
     const persistGuess = async (newAttemptIds: string[], won: boolean, duration?: number) => {
         if (!user) return;

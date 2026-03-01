@@ -1,13 +1,12 @@
 
 import { Station, GuessResult, MatchType } from '../types';
 
-
-import { STATIONS } from '../constants';
-
-// Pre-calculate adjacency list for BFS
-const getAdjacencyList = () => {
+/**
+ * Builds an adjacency list from a list of stations.
+ */
+const getAdjacencyList = (stations: Station[]) => {
     const lineStations = new Map<string, { id: string, order: number }[]>();
-    STATIONS.forEach(s => {
+    stations.forEach(s => {
         s.lines.forEach(line => {
             if (!lineStations.has(line)) lineStations.set(line, []);
             lineStations.get(line)!.push({ id: s.id, order: s.lineOrders[line] });
@@ -15,13 +14,13 @@ const getAdjacencyList = () => {
     });
 
     // Sort each line by order
-    lineStations.forEach(stations => stations.sort((a, b) => a.order - b.order));
+    lineStations.forEach(stationsList => stationsList.sort((a, b) => a.order - b.order));
 
     const neighbors = new Map<string, Set<string>>();
-    lineStations.forEach(stations => {
-        for (let i = 0; i < stations.length - 1; i++) {
-            const s1 = stations[i].id;
-            const s2 = stations[i + 1].id;
+    lineStations.forEach(stationsList => {
+        for (let i = 0; i < stationsList.length - 1; i++) {
+            const s1 = stationsList[i].id;
+            const s2 = stationsList[i + 1].id;
             if (!neighbors.has(s1)) neighbors.set(s1, new Set());
             if (!neighbors.has(s2)) neighbors.set(s2, new Set());
             neighbors.get(s1)!.add(s2);
@@ -31,9 +30,7 @@ const getAdjacencyList = () => {
     return neighbors;
 };
 
-const NEIGHBORS = getAdjacencyList();
-
-const calculateShortestDistance = (startId: string, endId: string): number => {
+const calculateShortestDistance = (startId: string, endId: string, neighbors: Map<string, Set<string>>): number => {
     if (startId === endId) return 0;
 
     const queue: [string, number][] = [[startId, 0]];
@@ -42,7 +39,7 @@ const calculateShortestDistance = (startId: string, endId: string): number => {
     while (queue.length > 0) {
         const [currentId, dist] = queue.shift()!;
 
-        const currentNeighbors = NEIGHBORS.get(currentId);
+        const currentNeighbors = neighbors.get(currentId);
         if (currentNeighbors) {
             for (const neighborId of currentNeighbors) {
                 if (neighborId === endId) return dist + 1;
@@ -57,8 +54,9 @@ const calculateShortestDistance = (startId: string, endId: string): number => {
     return 99; // Fallback should not happen in a connected network
 };
 
-export const calculateResult = (guessed: Station, targetStation: Station): GuessResult => {
+export const calculateResult = (guessed: Station, targetStation: Station, allStations: Station[]): GuessResult => {
     const nameMatch = guessed.id === targetStation.id;
+    const neighbors = getAdjacencyList(allStations);
 
     // Línia
     const sharedLines = guessed.lines.filter(l => targetStation.lines.includes(l));
@@ -110,7 +108,7 @@ export const calculateResult = (guessed: Station, targetStation: Station): Guess
     }
 
     // Distància: Càlcul real basat en BFS (nombre d'estacions)
-    const distanceMatch = calculateShortestDistance(guessed.id, targetStation.id);
+    const distanceMatch = calculateShortestDistance(guessed.id, targetStation.id, neighbors);
     let distanceDirection: 'up' | 'down' | 'none' = 'none';
 
     // Determinar dirección solo si están en la misma línea

@@ -31,6 +31,12 @@ export interface GuessResult {
   displayedPosition: string;
 }
 
+export interface LineStyle {
+  primary: string;
+  secondary: string;
+  font: string;
+}
+
 export interface GameStats {
   played: number;
   wins: number;

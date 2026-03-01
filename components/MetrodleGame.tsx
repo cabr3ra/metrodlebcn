@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { STATIONS } from '../constants';
 import { Station, GuessResult } from '../types';
 import GameGrid from './GameGrid';
 import SearchSuggestions from './SearchSuggestions';
@@ -24,6 +23,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
 
     const { station: dailyStation, dayNumber: fetchedDayNumber, date: dailyDate, loading: stationLoading } = useDailyStation();
     const today = new Date().toISOString().split('T')[0];
+    const { stations: allStations } = useStations();
 
     // Format date for display
     const formattedDate = useMemo(() => {
@@ -35,6 +35,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
             year: 'numeric'
         });
     }, [dailyDate, t.id]);
+
     const {
         guesses: remoteGuesses,
         persistGuess,
@@ -42,12 +43,11 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
         isCompleted,
         startTime: sessionStartTime,
         solveTime: remoteSolveTime
-    } = useGameState(today, dailyStation, 'metrodle');
+    } = useGameState(today, dailyStation, allStations, 'metrodle');
 
     const { stats, updateStats } = useUserStats('metrodle');
-    const { stations: allStations } = useStations();
 
-    const [targetStation, setTargetStation] = useState<Station>(STATIONS[0]);
+    const [targetStation, setTargetStation] = useState<Station | null>(null);
     const [dayNumber, setDayNumber] = useState<number>(0);
     const [guesses, setGuesses] = useState<GuessResult[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -91,7 +91,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
     }, [searchTerm, guesses, allStations]);
 
     const handleGuess = (station: Station) => {
-        if (gameOver) return;
+        if (gameOver || !targetStation) return;
 
         let start = gameStartTime;
         if (!start) {
@@ -99,7 +99,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
             setGameStartTime(start);
         }
 
-        const result = calculateResult(station, targetStation);
+        const result = calculateResult(station, targetStation, allStations);
         const newGuesses = [...guesses, result];
         setGuesses(newGuesses);
         setSearchTerm('');
@@ -133,8 +133,13 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
     return (
 
         <div className="flex-1 flex flex-col items-center w-full">
-            <div className="mb-2 text-zinc-500 font-bold text-xs uppercase tracking-widest">
+            <div className="ticket-date">
                 {formattedDate}
+                {gameOver && (
+                    <div className={`ticket-stamp ${won ? 'validated' : 'expired'}`}>
+                        {won ? 'VALIDADO' : 'EXPIRADO'}
+                    </div>
+                )}
             </div>
 
             <GameGrid guesses={guesses} maxAttempts={6} />
@@ -156,7 +161,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                     <h2 className="text-2xl font-bold mb-2">
                         {won ? t.won : t.lost}
                     </h2>
-                    <p className="text-zinc-500">{t.theStationWas} <span className="font-bold text-red-500">{targetStation.name}</span></p>
+                    <p className="text-zinc-500">{t.theStationWas} <span className="font-bold text-red-500">{targetStation?.name}</span></p>
                     <button
                         onClick={() => setShowStats(true)}
                         className="mt-4 px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full font-bold transition-transform active:scale-95 shadow-lg shadow-red-500/10"
@@ -172,7 +177,7 @@ const MetrodleGame: React.FC<MetrodleGameProps> = ({ showStats, setShowStats, on
                 onClose={() => setShowStats(false)}
                 guesses={guesses}
                 won={won}
-                target={targetStation}
+                target={targetStation || ({} as Station)}
                 solveTime={solveTime}
                 dayNumber={dayNumber}
                 date={dailyDate}

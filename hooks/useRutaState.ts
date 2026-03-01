@@ -3,10 +3,13 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { Station } from '../types';
-import { STATIONS } from '../constants';
 
-
-export function useRutaState(date: string, origin: Station | null, destination: Station | null) {
+export function useRutaState(
+    date: string,
+    origin: Station | null,
+    destination: Station | null,
+    allStations: Station[]
+) {
     const { user } = useAuth();
     const [correctStationIds, setCorrectStationIds] = useState<string[]>([]);
     const [errorLog, setErrorLog] = useState<string[]>([]);
@@ -18,7 +21,7 @@ export function useRutaState(date: string, origin: Station | null, destination: 
     const [startTime, setStartTime] = useState<number | null>(null);
 
     useEffect(() => {
-        if (!user || !date || !origin || !destination) return;
+        if (!user || !date || !origin || !destination || allStations.length === 0) return;
 
         let mounted = true;
 
@@ -80,7 +83,7 @@ export function useRutaState(date: string, origin: Station | null, destination: 
 
         loadState();
         return () => { mounted = false; };
-    }, [user, date, origin, destination]);
+    }, [user, date, origin, destination, allStations]);
 
     const persistProgress = async (newIds: string[], completed: boolean, failedStationId?: string) => {
         if (!user) return;

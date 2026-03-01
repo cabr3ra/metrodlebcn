@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Station } from '../types';
-import { STATIONS, LINE_STYLES } from '../constants';
 import SearchSuggestions from './SearchSuggestions';
 import StatsModal from './StatsModal';
 import { useDailyRoute } from '../hooks/useDailyRoute';
@@ -20,7 +19,7 @@ interface RutaGameProps {
 const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver }) => {
     const { t } = useLanguage();
     const { route: dailyRoute, loading: routeLoading } = useDailyRoute();
-    const { stations: allStations } = useStations();
+    const { stations: allStations, lineStyles } = useStations();
     const { stats, updateStats } = useUserStats('ruta');
 
     const today = new Date().toISOString().split('T')[0];
@@ -34,7 +33,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
         errors,
         setErrors,
         startTime: sessionStartTime
-    } = useRutaState(today, dailyRoute?.origin || null, dailyRoute?.destination || null);
+    } = useRutaState(today, dailyRoute?.origin || null, dailyRoute?.destination || null, allStations);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [gameOver, setGameOver] = useState(false);
@@ -47,9 +46,9 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
 
     // Calculate the target path
     const targetPath = useMemo(() => {
-        if (!dailyRoute) return [];
-        return findShortestPath(dailyRoute.origin.id, dailyRoute.destination.id) || [];
-    }, [dailyRoute]);
+        if (!dailyRoute || allStations.length === 0) return [];
+        return findShortestPath(dailyRoute.origin.id, dailyRoute.destination.id, allStations) || [];
+    }, [dailyRoute, allStations]);
 
     // Derived state: objects for correct stations
     const correctStations = useMemo(() => {
@@ -145,9 +144,16 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
 
     return (
         <div className="flex-1 flex flex-col items-center w-full max-w-md mx-auto h-[calc(100vh-180px)]">
-            <div className="mb-4 flex items-center justify-center gap-4 text-zinc-500 font-bold text-xs uppercase tracking-widest text-center">
-                <span>{formattedDate}</span>
-                <span>•</span>
+            <div className="ticket-date ruta">
+                {formattedDate}
+                {gameOver && (
+                    <div className={`ticket-stamp ${won ? 'validated' : 'expired'}`}>
+                        {won ? 'VALIDADO' : 'EXPIRADO'}
+                    </div>
+                )}
+            </div>
+
+            <div className="mb-4 flex items-center justify-center gap-4 text-zinc-500 font-bold text-[10px] uppercase tracking-widest text-center">
                 <span>{targetPath.length - 1} {t.stops || 'STOPS'}</span>
                 {errors > 0 && (
                     <>
@@ -184,7 +190,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                                         className={`w-4 h-4 rounded-full border-2 shrink-0 transition-all duration-700 ${isLastStation ? 'scale-125 shadow-[0_0_20px_rgba(255,255,255,0.6)] bg-white border-white ' + (idx > 0 ? 'animate-station-arrival' : '') : 'bg-zinc-900'
                                             }`}
                                         style={{
-                                            borderColor: idx === 0 ? '#fff' : (finalLines.length > 0 ? LINE_STYLES[finalLines[0]]?.primary : '#555')
+                                            borderColor: idx === 0 ? '#fff' : (finalLines.length > 0 ? (lineStyles[finalLines[0]]?.primary || '#555') : '#555')
                                         }}
                                     />
                                 </div>
@@ -208,7 +214,7 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                                                 <div
                                                     key={`guide-${lineId}`}
                                                     className="w-1 h-16 opacity-10 dashed-line-vertical"
-                                                    style={{ color: LINE_STYLES[lineId]?.primary }}
+                                                    style={{ color: lineStyles[lineId]?.primary }}
                                                 />
                                             ))}
                                         </div>
@@ -222,8 +228,8 @@ const RutaGame: React.FC<RutaGameProps> = ({ showStats, setShowStats, onGameOver
                                                     key={`${s.id}-${lineId}`}
                                                     className={`w-1.5 h-[calc(100%+16px)] origin-top ${idx === correctStations.length - 2 ? 'animate-grow-y' : ''}`}
                                                     style={{
-                                                        backgroundColor: LINE_STYLES[lineId]?.primary,
-                                                        boxShadow: `0 0 10px ${LINE_STYLES[lineId]?.primary}44`
+                                                        backgroundColor: lineStyles[lineId]?.primary,
+                                                        boxShadow: `0 0 10px ${lineStyles[lineId]?.primary}44`
                                                     }}
                                                 />
                                             ))}

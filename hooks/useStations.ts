@@ -1,57 +1,52 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Station } from '../types';
-import { STATIONS } from '../constants'; // Fallback
+import { Station, LineStyle } from '../types';
+import { mapDbStation, mapDbLines, STATION_SELECT_QUERY, LINE_SELECT_QUERY } from '../utils/supabaseUtils';
 
 export function useStations() {
     const [stations, setStations] = useState<Station[]>([]);
+    const [lineStyles, setLineStyles] = useState<Record<string, LineStyle>>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function fetchStations() {
+        let isMounted = true;
+
+        async function fetchData() {
             try {
                 setLoading(true);
-                // We need lines and connections too.
-                // It's efficient enough for 180 stations to fetch all at once.
-                const { data, error } = await supabase
-                    .from('stations')
-                    .select(`
-            id,
-            name,
-            type,
-            positions,
-            line_orders,
-            station_lines ( line_id ),
-            station_connections ( connection_id )
-          `);
 
-                if (error) throw error;
+                // Fetch both stations and lines in parallel
+                const [stationsRes, linesRes] = await Promise.all([
+                    supabase.from('stations').select(STATION_SELECT_QUERY),
+                    supabase.from('lines').select(LINE_SELECT_QUERY)
+                ]);
 
-                if (data) {
-                    const mapped: Station[] = data.map((d: any) => ({
-                        id: d.id,
-                        name: d.name,
-                        type: d.type,
-                        positions: d.positions,
-                        lineOrders: d.line_orders,
-                        lines: d.station_lines.map((sl: any) => sl.line_id),
-                        connections: d.station_connections.map((sc: any) => sc.connection_id)
-                    }));
-                    setStations(mapped);
-                } else {
-                    setStations(STATIONS);
+                if (stationsRes.error) throw stationsRes.error;
+                if (linesRes.error) throw linesRes.error;
+
+                if (isMounted) {
+                    if (stationsRes.data) {
+                        setStations(stationsRes.data.map(mapDbStation));
+                    }
+                    if (linesRes.data) {
+                        setLineStyles(mapDbLines(linesRes.data));
+                    }
                 }
             } catch (e) {
-                console.error('Error fetching stations:', e);
-                setStations(STATIONS); // Fallback
+                console.error('Error fetching game data:', e);
+                if (isMounted) {
+                    setStations([]);
+                    setLineStyles({});
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
         }
 
-        fetchStations();
+        fetchData();
+        return () => { isMounted = false; };
     }, []);
 
-    return { stations, loading };
+    return { stations, lineStyles, loading };
 }

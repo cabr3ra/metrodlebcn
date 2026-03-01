@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useUserStats } from '../hooks/useUserStats';
 import StatsModal from './StatsModal';
-import { STATIONS } from '../constants';
 
 import { useLanguage } from '../context/LanguageContext';
 
@@ -39,7 +38,7 @@ const PracticeGame: React.FC<PracticeGameProps> = ({ showStats, setShowStats }) 
                 onClose={() => setShowStats(false)}
                 guesses={[]}
                 won={false}
-                target={STATIONS[0]}
+                target={null as any}
                 solveTime={null}
                 dayNumber={0}
                 stats={stats}

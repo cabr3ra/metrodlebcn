@@ -1,14 +1,15 @@
 
 import { Station } from '../types';
-import { STATIONS } from '../constants';
 
-export function findShortestPath(originId: string, destinationId: string): Station[] | null {
+export function findShortestPath(originId: string, destinationId: string, stations: Station[]): Station[] | null {
+    if (stations.length === 0) return null;
+
     const queue: { id: string; path: string[] }[] = [{ id: originId, path: [originId] }];
     const visited = new Set<string>();
     visited.add(originId);
 
     const stationsMap = new Map<string, Station>();
-    STATIONS.forEach(s => stationsMap.set(s.id, s));
+    stations.forEach(s => stationsMap.set(s.id, s));
 
     while (queue.length > 0) {
         const { id, path } = queue.shift()!;
@@ -28,7 +29,7 @@ export function findShortestPath(originId: string, destinationId: string): Stati
             const order = currentStation.lineOrders[lineId];
 
             // Find other stations on the same line with order +1 or -1
-            STATIONS.forEach(s => {
+            stations.forEach(s => {
                 if (s.lineOrders[lineId] === order + 1 || s.lineOrders[lineId] === order - 1) {
                     neighbors.add(s.id);
                 }
